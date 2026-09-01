@@ -7,6 +7,8 @@ import { inspectTopology } from "./inspect/topology.ts";
 import { inspectDynamicalSystem } from "./inspect/dynamicalSystem.ts";
 import { inspectODE } from "./inspect/ode.ts";
 import { inspectDistribution } from "./inspect/distribution.ts";
+import { inspectDataset } from "./inspect/dataset.ts";
+import { inspectTimeSeries } from "./inspect/timeSeries.ts";
 import { homeomorphicSurfaces } from "../topo/topology.ts";
 import { parse } from "../mathlab/core/parser.ts";
 import { compile1 } from "../mathlab/core/eval.ts";
@@ -23,6 +25,8 @@ registerInspector("topology", (o) => (o.kind === "topology" ? inspectTopology(o.
 registerInspector("dynamicalSystem", (o) => (o.kind === "dynamicalSystem" ? inspectDynamicalSystem(o.vars, o.fieldSource, o.params ?? {}, o.systemKind) : unsupported(o.kind, "kind mismatch")));
 registerInspector("ode", (o) => (o.kind === "ode" ? inspectODE(o.vars, o.fieldSource, o.params ?? {}, o.y0, o.t0, o.t1, o.method) : unsupported(o.kind, "kind mismatch")));
 registerInspector("distribution", (o) => (o.kind === "distribution" ? inspectDistribution(o.name, o.params, o.seed) : unsupported(o.kind, "kind mismatch")));
+registerInspector("dataset", (o) => (o.kind === "dataset" ? inspectDataset(o.source, o.data, undefined) : unsupported(o.kind, "kind mismatch")));
+registerInspector("timeSeries", (o) => (o.kind === "timeSeries" ? inspectTimeSeries(o.t, o.y) : unsupported(o.kind, "kind mismatch")));
 
 /** Inspect any registered mathematical object. Pure, React-free. Dispatches via the registry;
  *  an unregistered kind degrades to a graceful "unsupported" result instead of throwing. */
