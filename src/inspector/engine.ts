@@ -6,6 +6,7 @@ import { inspectVector } from "./inspect/vector.ts";
 import { inspectTopology } from "./inspect/topology.ts";
 import { inspectDynamicalSystem } from "./inspect/dynamicalSystem.ts";
 import { inspectODE } from "./inspect/ode.ts";
+import { inspectDistribution } from "./inspect/distribution.ts";
 import { homeomorphicSurfaces } from "../topo/topology.ts";
 import { parse } from "../mathlab/core/parser.ts";
 import { compile1 } from "../mathlab/core/eval.ts";
@@ -21,6 +22,7 @@ registerInspector("vector", (o) => (o.kind === "vector" ? inspectVector(o.data) 
 registerInspector("topology", (o) => (o.kind === "topology" ? inspectTopology(o.surfaceId) : unsupported(o.kind, "kind mismatch")));
 registerInspector("dynamicalSystem", (o) => (o.kind === "dynamicalSystem" ? inspectDynamicalSystem(o.vars, o.fieldSource, o.params ?? {}, o.systemKind) : unsupported(o.kind, "kind mismatch")));
 registerInspector("ode", (o) => (o.kind === "ode" ? inspectODE(o.vars, o.fieldSource, o.params ?? {}, o.y0, o.t0, o.t1, o.method) : unsupported(o.kind, "kind mismatch")));
+registerInspector("distribution", (o) => (o.kind === "distribution" ? inspectDistribution(o.name, o.params, o.seed) : unsupported(o.kind, "kind mismatch")));
 
 /** Inspect any registered mathematical object. Pure, React-free. Dispatches via the registry;
  *  an unregistered kind degrades to a graceful "unsupported" result instead of throwing. */
