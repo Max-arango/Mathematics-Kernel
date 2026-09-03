@@ -34,15 +34,30 @@ function PropRow({ p }: { p: Property }) {
   );
 }
 
-// The kinds this UI offers an input form for. A subset of MathObject["kind"]: newer domain
-// kinds (e.g. dynamicalSystem) are inspectable through the engine but have no input panel yet.
-type Kind = "expression" | "matrix" | "vector" | "topology";
+// The kinds this UI offers an input form for. Covers the Phase I core kinds plus the
+// Phase IV domain kinds the Inspector engine now registers (dynamical systems, ODEs,
+// distributions, datasets, time series).
+type Kind = "expression" | "matrix" | "vector" | "topology" | "dynamicalSystem" | "ode" | "distribution" | "dataset" | "timeSeries";
 
 function parseMatrix(text: string): number[][] {
   return text.trim().split("\n").map((row) => row.trim().split(/[\s,]+/).map(Number));
 }
 function parseVector(text: string): number[] {
   return text.trim().split(/[\s,]+/).map(Number);
+}
+function parseNumbers(text: string): number[] {
+  return text.trim().split(/[\s,]+/).map(Number).filter((n) => Number.isFinite(n));
+}
+function parseParams(text: string): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const part of text.split(/[,\s]+/)) {
+    const i = part.indexOf("=");
+    if (i <= 0) continue;
+    const k = part.slice(0, i).trim();
+    const v = Number(part.slice(i + 1).trim());
+    if (k && Number.isFinite(v)) out[k] = v;
+  }
+  return out;
 }
 
 export function InspectorView() {
@@ -51,6 +66,19 @@ export function InspectorView() {
   const [matText, setMatText] = useState("2 -1\n1 2");
   const [vecText, setVecText] = useState("3, 4, 12");
   const [surfId, setSurfId] = useState("torus");
+  // Phase IV domain inputs.
+  const [sysVars, setSysVars] = useState("x, y");
+  const [sysField, setSysField] = useState("y\n-x");
+  const [odeVars, setOdeVars] = useState("x");
+  const [odeField, setOdeField] = useState("-x");
+  const [odeY0, setOdeY0] = useState("1");
+  const [odeT0, setOdeT0] = useState("0");
+  const [odeT1, setOdeT1] = useState("10");
+  const [odeMethod, setOdeMethod] = useState("rk4");
+  const [distName, setDistName] = useState("normal");
+  const [distParams, setDistParams] = useState("mu=0, sigma=1");
+  const [tsT, setTsT] = useState("0, 1, 2, 3, 4");
+  const [tsY, setTsY] = useState("0, 1, 4, 9, 16");
   const [history, setHistory] = useState<MathObject[]>([]);
   const [cmpId, setCmpId] = useState("sphere");
   const [cmpExpr, setCmpExpr] = useState("(x-1)*(x^2-2x+1)");
@@ -61,8 +89,13 @@ export function InspectorView() {
       case "matrix": return { kind: "matrix", data: parseMatrix(matText) };
       case "vector": return { kind: "vector", data: parseVector(vecText) };
       case "topology": return { kind: "topology", surfaceId: surfId };
+      case "dynamicalSystem": return { kind: "dynamicalSystem", vars: sysVars.split(",").map((s) => s.trim()), fieldSource: sysField.split("\n").map((s) => s.trim()), systemKind: "continuous" };
+      case "ode": return { kind: "ode", vars: odeVars.split(",").map((s) => s.trim()), fieldSource: odeField.split("\n").map((s) => s.trim()), y0: parseVector(odeY0), t0: Number(odeT0), t1: Number(odeT1), method: odeMethod };
+      case "distribution": return { kind: "distribution", name: distName, params: parseParams(distParams) };
+      case "dataset": return { kind: "dataset", source: "samples", data: parseNumbers(tsY), };
+      case "timeSeries": return { kind: "timeSeries", t: parseNumbers(tsT), y: parseNumbers(tsY) };
     }
-  }, [kind, exprSrc, matText, vecText, surfId]);
+  }, [kind, exprSrc, matText, vecText, surfId, sysVars, sysField, odeVars, odeField, odeY0, odeT0, odeT1, odeMethod, distName, distParams, tsT, tsY]);
 
   const result = useMemo(() => inspect(obj), [obj]);
 
@@ -96,10 +129,10 @@ export function InspectorView() {
         <div>
           <h2 className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-cyan-300/70">Object</h2>
           <div className="grid grid-cols-4 gap-1">
-            {(["expression", "matrix", "vector", "topology"] as Kind[]).map((k) => (
+            {(["expression", "matrix", "vector", "topology", "dynamicalSystem", "ode", "distribution", "dataset", "timeSeries"] as Kind[]).map((k) => (
               <button key={k} onClick={() => setKind(k)}
                 className={`rounded px-1 py-1 text-[11px] capitalize transition ${kind === k ? "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/40" : "text-slate-400 hover:bg-white/5"}`}>
-                {k === "expression" ? "expr" : k}
+                {k === "expression" ? "expr" : k === "dynamicalSystem" ? "dyn sys" : k === "timeSeries" ? "time ser." : k}
               </button>
             ))}
           </div>
@@ -112,6 +145,60 @@ export function InspectorView() {
           <select className={inputCls} value={surfId} onChange={(e) => setSurfId(e.target.value)}>
             {SURFACES.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
           </select>
+        )}
+        {kind === "dynamicalSystem" && (
+          <>
+            <div>
+              <label className="text-[10px] uppercase text-slate-500">state variables (comma-separated)</label>
+              <input className={inputCls} value={sysVars} spellCheck={false} onChange={(e) => setSysVars(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-[10px] uppercase text-slate-500">dx_i/dt (one per line)</label>
+              <textarea className={`${inputCls} h-20 resize-none`} value={sysField} spellCheck={false} onChange={(e) => setSysField(e.target.value)} />
+            </div>
+          </>
+        )}
+        {kind === "ode" && (
+          <>
+            <input className={inputCls} value={odeVars} spellCheck={false} onChange={(e) => setOdeVars(e.target.value)} placeholder="state vars: x" />
+            <textarea className={`${inputCls} h-16 resize-none`} value={odeField} spellCheck={false} onChange={(e) => setOdeField(e.target.value)} placeholder="dx/dt: -x" />
+            <div className="grid grid-cols-2 gap-1">
+              <div><label className="text-[10px] uppercase text-slate-500">y₀</label><input className={inputCls} value={odeY0} onChange={(e) => setOdeY0(e.target.value)} /></div>
+              <div><label className="text-[10px] uppercase text-slate-500">method</label>
+                <select className={inputCls} value={odeMethod} onChange={(e) => setOdeMethod(e.target.value)}>
+                  {["euler", "heun", "rk2", "rk4", "rkf45"].map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+              <div><label className="text-[10px] uppercase text-slate-500">t₀</label><input className={inputCls} value={odeT0} onChange={(e) => setOdeT0(e.target.value)} /></div>
+              <div><label className="text-[10px] uppercase text-slate-500">t₁</label><input className={inputCls} value={odeT1} onChange={(e) => setOdeT1(e.target.value)} /></div>
+            </div>
+          </>
+        )}
+        {kind === "distribution" && (
+          <>
+            <select className={inputCls} value={distName} onChange={(e) => setDistName(e.target.value)}>
+              {["bernoulli", "binomial", "uniform", "normal", "exponential", "poisson"].map((d) => <option key={d} value={d}>{d}</option>)}
+            </select>
+            <input className={inputCls} value={distParams} spellCheck={false} onChange={(e) => setDistParams(e.target.value)} placeholder="mu=0, sigma=1" />
+          </>
+        )}
+        {kind === "dataset" && (
+          <div>
+            <label className="text-[10px] uppercase text-slate-500">sample values (space/comma-separated)</label>
+            <input className={inputCls} value={tsY} spellCheck={false} onChange={(e) => setTsY(e.target.value)} placeholder="1, 2, 3, 4" />
+          </div>
+        )}
+        {kind === "timeSeries" && (
+          <>
+            <div>
+              <label className="text-[10px] uppercase text-slate-500">t</label>
+              <input className={inputCls} value={tsT} spellCheck={false} onChange={(e) => setTsT(e.target.value)} placeholder="0, 1, 2, 3" />
+            </div>
+            <div>
+              <label className="text-[10px] uppercase text-slate-500">y</label>
+              <input className={inputCls} value={tsY} spellCheck={false} onChange={(e) => setTsY(e.target.value)} placeholder="0, 1, 4, 9" />
+            </div>
+          </>
         )}
 
         {/* Capabilities */}
