@@ -308,6 +308,235 @@ z &= |\alpha|^{2} - |\beta|^{2} = \cos\theta
       ),
     ],
   },
+  // ─── PHASE IV — LINEAR ALGEBRA ───────────────────────────────────────────────
+  {
+    id: "linear-algebra",
+    title: { en: "Linear Algebra", es: "Álgebra lineal" },
+    blocks: [
+      p(
+        "Phase IV extends the matrix foundation into a serious linear algebra subsystem: vector spaces, linear maps, subspaces, bases, rank, nullspace, column/row spaces, and geometric visualization of 2D/3D linear maps.",
+        "La Fase IV extiende la base matricial en un subsistema serio de álgebra lineal: espacios vectoriales, aplicaciones lineales, subespacios, bases, rango, nucleo, espacios columna/fila, y visualización geométrica de aplicaciones lineales 2D/3D.",
+      ),
+      h("Matrix decompositions", "Descomposiciones matriciales"),
+      ul(
+        ["LU with partial pivoting: PA = LU for square matrices; solves linear systems and gives the determinant.", "QR (Householder): A = QR with orthonormal Q and upper-triangular R; stable least squares via back-substitution.", "Cholesky: A = LLᵀ for symmetric positive-definite matrices; half the work of LU.", "SVD: A = UΣVᵀ for any m×n matrix; singular values reveal rank, condition number κ = σ_max/σ_min, and the best low-rank approximation."],
+        ["LU con pivoteo parcial: PA = LU para matrices cuadradas; resuelve sistemas lineales y da el determinante.", "QR (Householder): A = QR con Q ortonormal y R triangular superior; mínimos cuadrados estables por sustitución hacia atrás.", "Cholesky: A = LLᵀ para matrices simétricas definidas positivas; la mitad del trabajo de LU.", "SVD: A = UΣVᵀ para cualquier matriz m×n; los valores singulares revelan rango, número de condición κ = σ_max/σ_min, y la mejor aproximación de bajo rango."],
+      ),
+      h("Eigenvalues & eigenvectors", "Autovalores y autovectores"),
+      p(
+        "The general eigenvalue problem Av = λv is solved by the QR algorithm with implicit shifts (handles complex/defective eigenvalues). For symmetric matrices the Jacobi method gives real eigenvalues and orthogonal eigenvectors. The inspector reports algebraic/geometric multiplicities and diagonalizability.",
+        "El problema general de autovalores Av = λv se resuelve por el algoritmo QR con desplazamientos implícitos (maneja autovalores complejos/defectuosos). Para matrices simétricas el método de Jacobi da autovalores reales y autovectores ortogonales. El inspector reporta multiplicidades algebraica/geométrica y diagonalizabilidad.",
+      ),
+      h("Least squares", "Mínimos cuadrados"),
+      p(
+        "min_x ‖Ax − b‖₂ is solved by QR (full rank) or SVD (rank-deficient). The inspector exposes the solution, residual norm, rank, and condition number.",
+        "min_x ‖Ax − b‖₂ se resuelve por QR (rango completo) o SVD (rango deficiente). El inspector expone la solución, norma del residuo, rango, y número de condición.",
+      ),
+      h("Change of basis", "Cambio de base"),
+      p(
+        "Coordinates [v]_B relative to a custom basis B are computed via the change-of-basis matrix. Visualization shows the standard basis, custom basis, and the coordinate transformation.",
+        "Coordenadas [v]_B relativas a una base personalizada B se calculan vía la matriz de cambio de base. La visualización muestra la base estándar, la base personalizada, y la transformación de coordenadas.",
+      ),
+    ],
+  },
+  // ─── PHASE IV — OPTIMIZATION ─────────────────────────────────────────────────
+  {
+    id: "optimization",
+    title: { en: "Optimization", es: "Optimización" },
+    blocks: [
+      p(
+        "A general optimization subsystem for local minimization: univariate (golden-section) and multivariate (gradient descent, damped Newton with backtracking line search). Every result exposes the solution, objective value, iterations, trajectory, gradient norm, and termination reason. No global-optimization claims are made.",
+        "Un subsistema de optimización general para minimización local: univariante (sección áurea) y multivariante (descenso de gradiente, Newton amortiguado con búsqueda de línea backtracking). Todo resultado expone la solución, valor objetivo, iteraciones, trayectoria, norma del gradiente, y razón de terminación. No se hacen afirmaciones de optimización global.",
+      ),
+      h("Univariate: golden-section", "Univariante: sección áurea"),
+      p(
+        "Derivative-free minimization of f on a bracket [a,b] assuming unimodality. Order φ⁻ⁿ convergence. The inspector classifies the critical point via f''.",
+        "Minimización libre de derivada de f en un intervalo [a,b] asumiendo unimodalidad. Convergencia orden φ⁻ⁿ. El inspector clasifica el punto crítico vía f''.",
+      ),
+      h("Multivariate: gradient descent & Newton", "Multivariante: descenso de gradiente y Newton"),
+      ul(
+        ["Gradient descent: steepest direction with Armijo backtracking; linear convergence, may stall on ill-conditioned problems.", "Newton: solves H·d = −∇f each step, falls back to gradient step when H is singular/indefinite; quadratic convergence near a non-degenerate minimum.", "Hessian classification: the inspector evaluates the Hessian at critical points and classifies them as minimum/maximum/saddle via eigenvalue signs."],
+        ["Descenso de gradiente: dirección más empinada con backtracking Armijo; convergencia lineal, puede estancarse en problemas mal condicionados.", "Newton: resuelve H·d = −∇f en cada paso, vuelve al paso de gradiente si H es singular/indefinido; convergencia cuadrática cerca de un mínimo no degenerado.", "Clasificación por Hessiano: el inspector evalúa el Hessiano en puntos críticos y los clasifica como mínimo/máximo/silla por los signos de los autovalores."],
+      ),
+      h("Visualization", "Visualización"),
+      p(
+        "For f(x,y): surface, contour map, gradient vectors, and optimization trajectory (starting point → minimum). The trajectory is a first-class visual object.",
+        "Para f(x,y): superficie, mapa de contorno, vectores gradiente, y trayectoria de optimización (punto inicial → mínimo). La trayectoria es un objeto visual de primera clase.",
+      ),
+    ],
+  },
+  // ─── PHASE IV — DYNAMICAL SYSTEMS ────────────────────────────────────────────
+  {
+    id: "dynamical-systems",
+    title: { en: "Dynamical Systems", es: "Sistemas dinámicos" },
+    blocks: [
+      p(
+        "First-class dynamical systems: continuous flows ẋ = f(x) and discrete maps xₙ₊₁ = f(xₙ) with named state variables and parameters. The inspector rebuilds the system from its source expressions and reports structure, equilibria, linearized stability, and vector field.",
+        "Sistemas dinámicos de primera clase: flujos continuos ẋ = f(x) y mapas discretos xₙ₊₁ = f(xₙ) con variables de estado y parámetros nombrados. El inspector reconstruye el sistema desde sus expresiones fuente y reporta estructura, equilibrios, estabilidad linealizada, y campo vectorial.",
+      ),
+      h("Equilibria", "Equilibrios"),
+      p(
+        "Equilibria satisfy f(x) = 0 (continuous) or f(x) = x (discrete). Found numerically by Newton from a seed grid; candidates are flagged as numerical, not proven. The inspector reports their coordinates and residuals.",
+        "Los equilibrios satisfacen f(x) = 0 (continuo) o f(x) = x (discreto). Se encuentran numéricamente por Newton desde una grilla de semillas; los candidatos se marcan como numéricos, no probados. El inspector reporta sus coordenadas y residuos.",
+      ),
+      h("Stability (Hartman–Grobman)", "Estabilidad (Hartman–Grobman)"),
+      p(
+        "At each equilibrium the Jacobian J = ∂f/∂x is evaluated and its eigenvalues inspected. Continuous: Re(λ) < 0 ⇒ stable, > 0 ⇒ unstable, ±i ⇒ center (linear), mixed ⇒ saddle. Discrete: |λ| < 1 ⇒ stable, > 1 ⇒ unstable, = 1 ⇒ center. The inspector honestly flags linear centers as inconclusive for nonlinear stability.",
+        "En cada equilibrio se evalúa el Jacobiano J = ∂f/∂x y se inspeccionan sus autovalores. Continuo: Re(λ) < 0 ⇒ estable, > 0 ⇒ inestable, ±i ⇒ centro (lineal), mixtos ⇒ silla. Discreto: |λ| < 1 ⇒ estable, > 1 ⇒ inestable, = 1 ⇒ centro. El inspector marca honestamente los centros lineales como inconclusivos para la estabilidad no lineal.",
+      ),
+      h("Phase space & nullclines", "Espacio de fases y nulinclinas"),
+      p(
+        "For 2D systems: vector field arrows, streamlines, multiple trajectories from different ICs, nullclines (f=0 and g=0 curves), and equilibrium overlays. This is a core visualization capability.",
+        "Para sistemas 2D: flechas de campo vectorial, líneas de corriente, múltiples trayectorias desde CI distintas, nulinclinas (curvas f=0 y g=0), y superposición de equilibrios. Es una capacidad de visualización central.",
+      ),
+      h("Bifurcation & chaos", "Bifurcación y caos"),
+      p(
+        "Parameter sweeps (μ) show equilibria vs μ and stability vs μ. Classic examples: logistic map (period doubling → chaos), saddle-node, pitchfork. Chaos tools: Lyapunov exponent, sensitivity to ICs, orbit diagrams, Poincaré sections — all with deterministic seeds for reproducibility.",
+        "Barridos de parámetros (μ) muestran equilibrios vs μ y estabilidad vs μ. Ejemplos clásicos: mapa logístico (duplicación de período → caos), silla-nudo, horquilla. Herramientas de caos: exponente de Lyapunov, sensibilidad a CI, diagramas de órbita, secciones de Poincaré — todos con semillas determinísticas para reproducibilidad.",
+      ),
+    ],
+  },
+  // ─── PHASE IV — ODEs ─────────────────────────────────────────────────────────
+  {
+    id: "odes",
+    title: { en: "ODEs", es: "EDOs" },
+    blocks: [
+      p(
+        "A general ODE solver architecture for dy/dt = f(t,y), y(t₀)=y₀. Fixed-step methods (Euler, Heun, RK2, RK4) and adaptive RKF45 with step-size control. All solvers share the ODEResult shape: samples, step count, convergence flag, error estimate, accepted/rejected steps. The method registry lets future solvers be added without rewriting callers.",
+        "Una arquitectura general de solvers EDO para dy/dt = f(t,y), y(t₀)=y₀. Métodos de paso fijo (Euler, Heun, RK2, RK4) y RKF45 adaptativo con control de paso. Todos comparten la forma ODEResult: muestras, conteo de pasos, bandera de convergencia, estimación de error, pasos aceptados/rechazados. El registro de métodos permite añadir futuros solvers sin reescribir los llamadores.",
+      ),
+      h("Methods", "Métodos"),
+      ul(
+        ["Euler: order 1, 1 f-eval/step, explicit/conditionally stable.", "Heun (trapezoid): order 2, 2 f-evals.", "RK2 (midpoint): order 2, 2 f-evals.", "RK4: order 4, 4 f-evals, classic workhorse.", "RKF45: adaptive 4(5) pair, error-controlled step, local extrapolation (5th-order propagated); still explicit/non-stiff."],
+        ["Euler: orden 1, 1 eval-f/paso, explícito/condicionalmente estable.", "Heun (trapecio): orden 2, 2 eval-f.", "RK2 (punto medio): orden 2, 2 eval-f.", "RK4: orden 4, 4 eval-f, caballo de batalla clásico.", "RKF45: par adaptativo 4(5), paso controlado por error, extrapolación local (5to orden propagado); sigue siendo explícito/no rígido."],
+      ),
+      h("Visualization & parameter sweeps", "Visualización y barridos de parámetros"),
+      p(
+        "Time series y(t), phase portraits, 3D trajectories, time scrubber/playback, parameter and IC sliders. Batch experiments compare methods (Euler vs RK4) on runtime, steps, error, trajectory shape, and stability.",
+        "Serie temporal y(t), retratos de fase, trayectorias 3D, control temporal/playback, sliders de parámetros y CI. Experimentos por lotes comparan métodos (Euler vs RK4) en tiempo, pasos, error, forma de trayectoria, y estabilidad.",
+      ),
+      h("Numerical stability", "Estabilidad numérica"),
+      p(
+        "Explicit methods are conditionally stable; on stiff problems the step is bounded by stability, not accuracy. RKF45 adapts the step but is still explicit. Warnings are emitted for non-finite states and max-step caps. No unstable solution is presented as correct mathematics.",
+        "Los métodos explícitos son condicionalmente estables; en problemas rígidos el paso está acotado por estabilidad, no precisión. RKF45 adapta el paso pero sigue siendo explícito. Se emiten advertencias por estados no-finitos y tope de pasos máximos. Ninguna solución inestable se presenta como matemática correcta.",
+      ),
+    ],
+  },
+  // ─── PHASE IV — PDEs ─────────────────────────────────────────────────────────
+  {
+    id: "pdes",
+    title: { en: "PDEs", es: "EDPs" },
+    blocks: [
+      p(
+        "An extensible PDE foundation (not a full library). Canonical examples: 1D heat (u_t = αu_xx), 1D wave (u_tt = c²u_xx), and 2D Laplace/Poisson (∇²u = f) via finite differences. The solver interface is clean so new discretizations can be added.",
+        "Una base EDP extensible (no una librería completa). Ejemplos canónicos: calor 1D (u_t = αu_xx), onda 1D (u_tt = c²u_xx), y Laplace/Poisson 2D (∇²u = f) por diferencias finitas. La interfaz del solver es limpia para añadir nuevas discretizaciones.",
+      ),
+      h("1D Heat equation", "Ecuación del calor 1D"),
+      p(
+        "Explicit FTCS: u^{n+1}_i = u^n_i + α(Δt/Δx²)(u^n_{i+1} − 2u^n_i + u^n_{i-1}). Stability requires Δt ≤ Δx²/(2α). Dirichlet/Neumann boundary conditions supported. Visualization: heat map, surface, time evolution with a time control.",
+        "FTCS explícito: u^{n+1}_i = u^n_i + α(Δt/Δx²)(u^n_{i+1} − 2u^n_i + u^n_{i-1}). Estabilidad requiere Δt ≤ Δx²/(2α). Condiciones de Dirichlet/Neumann soportadas. Visualización: mapa de calor, superficie, evolución temporal con control de tiempo.",
+      ),
+      h("1D Wave equation", "Ecuación de onda 1D"),
+      p(
+        "Explicit central differences in time and space: u^{n+1}_i = 2u^n_i − u^{n-1}_i + c²(Δt/Δx)²(u^n_{i+1} − 2u^n_i + u^n_{i-1}). CFL condition: cΔt/Δx ≤ 1. Initial displacement + velocity. Visualization: time-evolving string/surface.",
+        "Diferencias centrales explícitas en tiempo y espacio: u^{n+1}_i = 2u^n_i − u^{n-1}_i + c²(Δt/Δx)²(u^n_{i+1} − 2u^n_i + u^n_{i-1}). Condición CFL: cΔt/Δx ≤ 1. Desplazamiento + velocidad iniciales. Visualización: cuerda/superficie que evoluciona en el tiempo.",
+      ),
+      h("2D Laplace/Poisson (steady)", "Laplace/Poisson 2D (estacionario)"),
+      p(
+        "5-point stencil: (u_{i+1,j} + u_{i-1,j} + u_{i,j+1} + u_{i,j-1} − 4u_{i,j})/h² = f_{i,j}. Solved by direct Gaussian elimination on the banded system. Dirichlet boundary conditions. Visualization: 2D heat map, contour plot.",
+        "Estrella de 5 puntos: (u_{i+1,j} + u_{i-1,j} + u_{i,j+1} + u_{i,j-1} − 4u_{i,j})/h² = f_{i,j}. Resuelto por eliminación gaussiana directa en el sistema de banda. Condiciones de Dirichlet. Visualización: mapa de calor 2D, gráfico de contorno.",
+      ),
+    ],
+  },
+  // ─── PHASE IV — PROBABILITY / STATISTICS ─────────────────────────────────────
+  {
+    id: "probability-statistics",
+    title: { en: "Probability & Statistics", es: "Probabilidad y Estadística" },
+    blocks: [
+      p(
+        "Distributions (Bernoulli, Binomial, Uniform, Normal, Exponential, Poisson) with closed-form moments, PMF/PDF, CDF, and seeded reproducible sampling. The distribution registry lets new families be added. Monte Carlo framework: generic estimator with standard error, confidence intervals, and seeded reproducibility.",
+        "Distribuciones (Bernoulli, Binomial, Uniforme, Normal, Exponencial, Poisson) con momentos en forma cerrada, PMF/PDF, CDF, y muestreo sembrado reproducible. El registro de distribuciones permite añadir nuevas familias. Monte Carlo: estimador genérico con error estándar, intervalos de confianza, y reproducibilidad sembrada.",
+      ),
+      h("Descriptive statistics", "Estadística descriptiva"),
+      p(
+        "Mean, median, mode, variance, stdev, quantiles (type-7/R default), covariance, Pearson correlation. Dataset object (row-major, named columns) is the shared interchange format for statistics, regression, optimization, and experiments.",
+        "Media, mediana, moda, varianza, desv. típica, cuantiles (tipo-7/default R), covarianza, correlación de Pearson. El objeto Dataset (fila-mayor, columnas nombradas) es el formato de intercambio compartido para estadística, regresión, optimización, y experimentos.",
+      ),
+      h("Regression", "Regresión"),
+      p(
+        "Linear and polynomial regression via least squares (QR/SVD). Coefficients, residuals, R², predictions with confidence information where justified. Correlation ≠ causation is explicitly noted.",
+        "Regresión lineal y polinomial por mínimos cuadrados (QR/SVD). Coeficientes, residuos, R², predicciones con información de confianza donde se justifica. Correlación ≠ causalidad se nota explícitamente.",
+      ),
+      h("Visualization", "Visualización"),
+      ul(
+        ["Distributions: PMF/PDF curve, CDF, shaded probability intervals P(a<X<b), histogram of seeded samples.", "Datasets: scatter plots, histograms, box plots, correlation matrix heatmap.", "Time series: y(t) with trend slope from OLS."],
+        ["Distribuciones: curva PMF/PDF, CDF, intervalos de probabilidad sombreados P(a<X<b), histograma de muestras sembradas.", "Datasets: scatter plots, histogramas, box plots, heatmap de matriz de correlación.", "Series temporales: y(t) con pendiente de tendencia por OLS."],
+      ),
+    ],
+  },
+  // ─── PHASE IV — NUMBER THEORY ────────────────────────────────────────────────
+  {
+    id: "number-theory",
+    title: { en: "Number Theory", es: "Teoría de números" },
+    blocks: [
+      p(
+        "Exact integer arithmetic using JavaScript bigint where precision would be lost: gcd, lcm, extended Euclidean algorithm, modular arithmetic/exponentiation, prime testing (deterministic Miller–Rabin for 64-bit), prime factorization (Pollard's ρ), Euler φ, Möbius μ. Collatz exploration with visual stopping-time plots.",
+        "Aritmética exacta de enteros usando bigint de JavaScript donde se perdería precisión: mcd, mcm, Euclides extendido, aritmética/exponenciación modular, primalidad (Miller–Rabin determinista para 64-bit), factorización (Pollard ρ), φ de Euler, μ de Möbius. Exploración de Collatz con gráficos de tiempo de parada.",
+      ),
+      h("Visualizations", "Visualizaciones"),
+      ul(
+        ["Prime distribution & density.", "Modular multiplication tables & residue patterns.", "Collatz stopping times vs seed, max value, trajectory length."],
+        ["Distribución y densidad de primos.", "Tablas de multiplicación modular y patrones de residuos.", "Tiempos de parada de Collatz vs semilla, valor máximo, longitud de trayectoria."],
+      ),
+    ],
+  },
+  // ─── PHASE IV — COMPLEX ANALYSIS ─────────────────────────────────────────────
+  {
+    id: "complex-analysis",
+    title: { en: "Complex Analysis", es: "Análisis complejo" },
+    blocks: [
+      p(
+        "Builds on the existing complex-number infrastructure. Visualization: complex plane, domain coloring (hue = arg f(z), brightness = |f(z)|), grid mapping (rectangular grid → deformed grid under f). Supported functions: z², e^z, 1/z, log z (branch behavior explicit).",
+        "Se apoya en la infraestructura existente de números complejos. Visualización: plano complejo, domain coloring (matiz = arg f(z), brillo = |f(z)|), mapeo de cuadrícula (cuadrícula rectangular → cuadrícula deformada bajo f). Funciones soportadas: z², e^z, 1/z, log z (comportamiento de rama explícito).",
+      ),
+      h("Holomorphicity & Cauchy–Riemann", "Holomorfía y Cauchy–Riemann"),
+      p(
+        "For f(z) = u(x,y) + iv(x,y), the inspector checks u_x = v_y and u_y = −v_x (Cauchy–Riemann). Functions of z and z̄ are correctly identified as non-holomorphic. The complex derivative (when it exists) is distinguished from real partial derivatives.",
+        "Para f(z) = u(x,y) + iv(x,y), el inspector comprueba u_x = v_y y u_y = −v_x (Cauchy–Riemann). Funciones de z y z̄ se identifican correctamente como no holomorfas. La derivada compleja (cuando existe) se distingue de las derivadas parciales reales.",
+      ),
+      h("Special functions", "Funciones especiales"),
+      p(
+        "Registry architecture (not a kitchen sink). Implemented: logGamma, Gamma, erf — only when numerical behavior is properly tested. Additional functions register by name.",
+        "Arquitectura de registro (no un cajón de sastre). Implementados: logGamma, Gamma, erf — solo cuando el comportamiento numérico se testea correctamente. Funciones adicionales se registran por nombre.",
+      ),
+    ],
+  },
+  // ─── PHASE IV — UNITS / SCIENTIFIC COMPUTING ─────────────────────────────────
+  {
+    id: "scientific-computing",
+    title: { en: "Scientific Computing: Units & Uncertainty", es: "Cálculo científico: Unidades e Incertidumbre" },
+    blocks: [
+      p(
+        "Physical units as structured metadata: distance = 5 m, time = 2 s → velocity = 2.5 m/s. Unit conversion, addition compatibility checks, multiplication/division/powers, dimensional consistency (5 m + 2 s ⇒ dimension mismatch). Unit-aware symbolic expressions carry dimensions through the Inspector.",
+        "Unidades físicas como metadatos estructurados: distancia = 5 m, tiempo = 2 s → velocidad = 2.5 m/s. Conversión de unidades, comprobación de compatibilidad en suma, multiplicación/división/potencias, consistencia dimensional (5 m + 2 s ⇒ dimension mismatch). Expresiones simbólicas unit-aware transportan dimensiones por el Inspector.",
+      ),
+      h("Constants registry", "Registro de constantes"),
+      p(
+        "Structured registry: mathematical constants (π, e, φ, τ), physical constants (c, G, h, k_B, …) with name, symbol, value, unit, source metadata. User-defined constants supported. No hard-coded constants scattered through the codebase.",
+        "Registro estructurado: constantes matemáticas (π, e, φ, τ), constantes físicas (c, G, h, k_B, …) con nombre, símbolo, valor, unidad, metadatos de fuente. Constantes definidas por el usuario soportadas. Sin constantes hard-codeadas dispersas por el código.",
+      ),
+      h("Uncertainty propagation", "Propagación de incertidumbre"),
+      p(
+        "Measurement value ± absolute/relative uncertainty. Propagation through +, −, ×, ÷ with standard formulas. Foundation for future scientific computing; not a complete uncertainty theory.",
+        "Valor de medición ± incertidumbre absoluta/relativa. Propagación por +, −, ×, ÷ con fórmulas estándar. Base para futuro cálculo científico; no una teoría completa de incertidumbre.",
+      ),
+      h("Numerical method registry", "Registro de métodos numéricos"),
+      p(
+        "Unified catalog (RootSolver, Integrator, ODESolver, Optimizer, LinearSolver, MonteCarloMethod) with name, capabilities, parameters, result type, and honest limitations. Powers solver comparison UIs and self-describing experiments.",
+        "Catálogo unificado (RootSolver, Integrator, ODESolver, Optimizer, LinearSolver, MonteCarloMethod) con nombre, capacidades, parámetros, tipo de resultado, y limitaciones honestas. Alimenta UIs de comparación de solvers y experimentos auto-descriptivos.",
+      ),
+    ],
+  },
   {
     id: "kernel",
     title: { en: "Math kernel", es: "Núcleo matemático" },
