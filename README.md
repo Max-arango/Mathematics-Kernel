@@ -65,21 +65,61 @@ The top navigation switches between six workspaces:
 - Bilingual (English / Español) manual explaining every workspace and its
   underlying mathematics, with formulas typeset by **KaTeX**.
 
+### 🔬 Inspector — mathematical microscope
+- Pick an object (expression, matrix, vector, topology, dynamical system, ODE,
+  probability distribution, dataset, time series) and read its structure,
+  properties, calculus, and invariants — each value tagged with how it was
+  obtained (`exact` / `symbolic` / `numerical` / `estimated` / `inferred`).
+- Compare mode, capability chips, navigable related objects, and honest
+  assumptions/limits lists.
+
+### 📓 Notebook — reproducible experiments
+- Declarative `.mathsim.json` documents: markdown, parameters, expressions,
+  and analyses — outputs derived deterministically from cell source.
+- Dependency-graph propagation, undo/redo, snapshots, autosave, import/export.
+- Bundled example gallery (calculus, linear algebra, optimization, dynamics,
+  ODEs, PDEs, probability, number theory, complex analysis, units).
+
+---
+
+## Advanced mathematics & scientific computing (Phase IV)
+
+Beyond the visual workspaces, the math core (`src/mathlab/`) is a serious
+scientific-computing environment. Every domain shares the same object →
+analysis → Inspector → visualization → experiment architecture, so you move
+naturally between symbolic math, numerical math, and simulation.
+
+| Domain | Highlights |
+| ------ | ---------- |
+| **Linear algebra** | LU / QR / Cholesky decompositions, SVD (`UΣVᵀ`), eigen (Jacobi + QR iteration), least squares, nullspace, condition number, 2D/3D geometric visualization |
+| **Dynamical systems** | Continuous flows & discrete maps, equilibria (Newton), Jacobian stability (Hartman–Grobman), phase space, nullclines, bifurcation & chaos (Lyapunov, orbits) |
+| **ODEs** | Euler, Heun, RK2, RK4, adaptive RKF45; systems & IVPs; error metadata, parameter sweeps, method comparison |
+| **PDEs** | 1D heat, 1D wave, 2D Laplace/Poisson via finite differences; CFL/stability-aware |
+| **Optimization** | Golden-section, gradient descent, damped Newton; trajectories, Hessian classification, convergence analysis |
+| **Probability / Statistics** | 6 distributions (Bernoulli → Poisson), seeded sampling, Monte Carlo, descriptive stats, Dataset object, regression |
+| **Number theory** | `bigint`-exact gcd/lcm/extended-Euclid, Miller–Rabin primality, Pollard ρ factorization, φ, μ, Collatz |
+| **Complex analysis** | Domain coloring, grid mapping (`z², eˣ, 1/z, log z`), Cauchy–Riemann, special functions (Gamma, erf) |
+| **Scientific computing** | Units & dimensional analysis, constants registry, uncertainty propagation, unified numerical-method registry |
+
 ---
 
 ## Shared math core (`src/mathlab/`)
 
-The correctness-critical layer, unit-tested (112 tests total):
+The correctness-critical layer, unit-tested (950+ tests total):
 
 - `core/` — `lexer` → `parser` → `ast`, real `eval` (whitelisted functions,
-  **never `eval`/`Function`**), `simplify`, `print`, and `complexGlsl`
-  (AST → GLSL complex arithmetic).
+  **never `eval`/`Function`**), `simplify`, `print`, `complexGlsl`
+  (AST → GLSL complex arithmetic), seeded PRNG, structured errors/results,
+  unified numerical-method registry, and the shared `TimeSeries` object.
 - `calculus/derivative` — symbolic differentiation (chain/product/quotient/power).
 - `analysis/` — numeric `roots` (bisection + Newton) and `integrate` (Simpson).
+- `linear/` — matrix/vector algebra, LU/QR/Cholesky/SVD, eigen, subspaces, least squares.
+- `dynamics/`, `ode/`, `pde/`, `optimization/`, `probability/`, `statistics/`,
+  `numberTheory/`, `complex/`, `units/`, `special/` — the Phase IV domains above.
 - `graph/scene` — turns expression lines into functions, sliders, and plots.
 
-The same parsed AST feeds the graphing calculator **and** the fractal shaders —
-that is the core design principle.
+The same parsed AST feeds the graphing calculator, the fractal shaders, the
+dynamical-system/ODE labs, and the inspector — that is the core design principle.
 
 ---
 
@@ -99,14 +139,19 @@ that is the core design principle.
 
 ```
 src/
-  mathlab/            shared math core (lexer, parser, AST, eval, calculus, analysis)
+  mathlab/            shared math core (lexer, parser, AST, eval, calculus, analysis,
+                      linear, dynamics, ode, pde, optimization, probability,
+                      statistics, numberTheory, complex, units, special)
+  inspector/          mathematical-object inspector (registry-driven, per-domain)
+  experiment/         notebook / experiment document model + engine + serialization
   fractals/           fractal registry + types
   webgl/              WebGL renderer + AST→GLSL custom-shader builder
   graph/              graphing state + slider config
   bloch/              qubit math + state
   fourd/              4D vectors, polytopes, parametric surfaces
   topo/               topology surfaces + mesh + morph
-  components/         React UI per workspace (graph, bloch, fourd, topo, docs, …)
+  components/         React UI per workspace (graph, bloch, fourd, topo, inspector,
+                      notebook, docs, …)
   App.tsx             top-level workspace switcher
 ```
 
