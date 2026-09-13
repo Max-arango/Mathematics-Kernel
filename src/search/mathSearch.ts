@@ -26,6 +26,7 @@ export const SEARCH_INDEX: SearchEntry[] = [
   { id: "ws-bloch", kind: "workspace", title: "Bloch Sphere", keywords: ["quantum", "qubit", "bloch", "gate", "pulse", "unitary", "spin"], route: "bloch" },
   { id: "ws-fourd", kind: "workspace", title: "4D", keywords: ["4d", "fourd", "polytope", "tesseract", "hypercube", "hoph", "clifford"], route: "fourd" },
   { id: "ws-topo", kind: "workspace", title: "Topology", keywords: ["topology", "homeomorphism", "genus", "euler characteristic", "manifold", "surface", "morph"], route: "topo" },
+  { id: "ws-dynamics3d", kind: "workspace", title: "Dynamics 3D", keywords: ["dynamics 3d", "gravity", "n-body", "mathematical field", "general relativity", "schwarzschild", "kerr", "black hole", "geodesic", "frame dragging"], route: "dynamics3d" },
   { id: "ws-inspector", kind: "workspace", title: "Inspector", keywords: ["inspect", "analyze", "properties", "invariants", "compare"], route: "inspector" },
   { id: "ws-notebook", kind: "workspace", title: "Notebook", keywords: ["experiment", "notebook", "reproducib", "cell", "serialize"], route: "notebook" },
 
@@ -33,6 +34,7 @@ export const SEARCH_INDEX: SearchEntry[] = [
   { id: "doc-linear", kind: "doc", title: "Linear Algebra", keywords: ["matrix", "vector", "eigenvalue", "eigenvector", "svd", "decomposition", "lu", "qr", "cholesky", "least squares", "determinant", "nullspace", "rank", "basis"], route: "linear-algebra" },
   { id: "doc-opt", kind: "doc", title: "Optimization", keywords: ["optimization", "gradient descent", "newton", "golden-section", "hessian", "critical point", "rosenbrock", "minimum"], route: "optimization" },
   { id: "doc-dyn", kind: "doc", title: "Dynamical Systems", keywords: ["dynamical", "equilibrium", "jacobian", "stability", "phase space", "nullcline", "bifurcation", "lyapunov", "lorenz", "attractor", "fixed point"], route: "dynamical-systems" },
+  { id: "doc-dyn3d", kind: "doc", title: "Dynamics 3D", keywords: ["dynamics 3d", "gravity", "n-body", "newtonian", "mathematical field", "divergence", "curl", "general relativity", "minkowski", "schwarzschild", "kerr", "christoffel", "geodesic", "riemann", "ricci", "einstein tensor", "frame dragging", "zamo", "black hole"], route: "dynamics3d" },
   { id: "doc-ode", kind: "doc", title: "ODEs", keywords: ["ode", "rk4", "rkf45", "euler", "heun", "runge-kutta", "initial value", "ivp", "differential equation", "stiff", "convergence"], route: "odes" },
   { id: "doc-pde", kind: "doc", title: "PDEs", keywords: ["pde", "heat equation", "wave equation", "laplace", "poisson", "finite difference", "cfl", "diffusion"], route: "pdes" },
   { id: "doc-prob", kind: "doc", title: "Probability & Statistics", keywords: ["probability", "distribution", "normal", "binomial", "poisson", "pdf", "cdf", "statistics", "regression", "correlation", "monte carlo", "variance", "expected value"], route: "probability-statistics" },

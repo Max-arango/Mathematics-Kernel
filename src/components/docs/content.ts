@@ -396,6 +396,94 @@ z &= |\alpha|^{2} - |\beta|^{2} = \cos\theta
       ),
     ],
   },
+  // ─── DYNAMICS 3D — SPACE-TIME DYNAMICS LABORATORY ────────────────────────────
+  {
+    id: "dynamics3d",
+    title: { en: "Dynamics 3D", es: "Dinámica 3D" },
+    blocks: [
+      p(
+        "One Model toggle switches among three independent physical models — Gravity (N-Body), Mathematical Field, General Relativity — sharing one camera, one render loop and one click-to-spawn preset picker. All physics runs in refs and steps inside the animation loop, never in React state; nothing here is a second engine — the same parser, AST and ODE solver that drive every other MATH·LAB workspace drive all three modes. No eval / new Function.",
+        "Un solo interruptor de Modelo cambia entre tres modelos físicos independientes — Gravity (N-Body), Mathematical Field, General Relativity — que comparten una cámara, un bucle de render y un mismo selector de presets de clic-para-crear. Toda la física corre en refs y avanza dentro del bucle de animación, nunca en el estado de React; nada aquí es un segundo motor — el mismo parser, AST y solver EDO que impulsan cada otro espacio de MATH·LAB impulsan los tres modos. Sin eval / new Function.",
+      ),
+      h("Mathematical Field mode", "Modo Mathematical Field"),
+      p(
+        "dx/dt, dy/dt, dz/dt are typed as ordinary expressions and parsed into the same DynamicalSystem the 2D Dynamics workspace uses (makeSystem) — an arbitrary user-defined F: ℝ³→ℝ³, completely independent of the gravity Simulation. A grid of arrows samples F on a resolution³ box (or a 2D slice pinned to one axis, xy/xz/yz); probe streamlines integrate dx/dt = F(x) with the shared RK4 solver.",
+        "dx/dt, dy/dt, dz/dt se escriben como expresiones normales y se parsean al mismo DynamicalSystem que usa el espacio 2D Dynamics (makeSystem) — un campo F: ℝ³→ℝ³ definido por el usuario, totalmente independiente de la Simulation de gravedad. Una grilla de flechas muestrea F en una caja resolution³ (o un corte 2D fijando un eje, xy/xz/yz); las líneas de corriente de sonda integran dx/dt = F(x) con el solver RK4 compartido.",
+      ),
+      ul(
+        [
+          "Vector field view: arrows scaled and colored by |F|.",
+          "Divergence view: one colored dot per sample point, red = source (∇·F>0), blue = sink (∇·F<0).",
+          "Curl view: ∇×F drawn as arrows.",
+          "Slice modes (xy / xz / yz) confine the sample grid to a single plane instead of the full volume.",
+        ],
+        [
+          "Vista de campo vectorial: flechas escaladas y coloreadas por |F|.",
+          "Vista de divergencia: un punto coloreado por muestra, rojo = fuente (∇·F>0), azul = sumidero (∇·F<0).",
+          "Vista de rotacional: ∇×F dibujado como flechas.",
+          "Los modos de corte (xy / xz / yz) confinan la grilla de muestreo a un solo plano en vez del volumen completo.",
+        ],
+      ),
+      p(
+        "Divergence and curl are not a finite-difference hack over the sampled grid — both are built from the same symbolic Jacobian (jacobianField) the rest of the app already uses for gradient/Hessian/Laplacian. Curl is 3D-specific so it lives beside the field code, but it reuses that Jacobian rather than differentiating separately:",
+        "Divergencia y rotacional no son un parche por diferencias finitas sobre la grilla muestreada — ambos se construyen con el mismo Jacobiano simbólico (jacobianField) que ya usa el resto de la app para gradiente/Hessiano/Laplaciano. El rotacional es específico de 3D, así que vive junto al código del campo, pero reutiliza ese Jacobiano en vez de derivar por separado:",
+      ),
+      math(String.raw`\nabla\!\cdot\!F = \frac{\partial F_x}{\partial x}+\frac{\partial F_y}{\partial y}+\frac{\partial F_z}{\partial z},\qquad \nabla\times F = \left(\frac{\partial F_z}{\partial y}-\frac{\partial F_y}{\partial z},\ \frac{\partial F_x}{\partial z}-\frac{\partial F_z}{\partial x},\ \frac{\partial F_y}{\partial x}-\frac{\partial F_x}{\partial y}\right)`),
+      h("Newtonian Gravity mode", "Modo Newtonian Gravity"),
+      p(
+        "Two force laws share one seam (gravityModel.ts), selectable per run: softened (Plummer, the default) is finite everywhere by construction; exact (unsoftened 1/r²) is Newton's law verbatim, clamped at a distance floor (10⁻⁶) near r=0 with a visible hitFloor flag rather than silently substituting the softened formula.",
+        "Dos leyes de fuerza comparten un mismo punto de acceso (gravityModel.ts), seleccionable por corrida: softened (Plummer, la opción por defecto) es finita en todas partes por construcción; exact (1/r² sin suavizar) es la ley de Newton literal, acotada por un piso de distancia (10⁻⁶) cerca de r=0 con una bandera hitFloor visible en vez de sustituir en silencio la fórmula suavizada.",
+      ),
+      math(String.raw`\begin{aligned}
+\text{exact:}\quad \Phi &= -\frac{GM}{r}, \qquad g = \frac{GM}{r^{3}}\,\Delta \\[4pt]
+\text{softened (Plummer):}\quad \Phi &= -\frac{GM}{\sqrt{r^{2}+\varepsilon^{2}}}, \qquad g = \frac{GM}{\left(r^{2}+\varepsilon^{2}\right)^{3/2}}\,\Delta
+\end{aligned}`),
+      p(
+        "Every body carries an experimental gravitationalStrength multiplier (effectiveMass = mass × gravitationalStrength) with no physical meaning of its own. Kinetic energy is always tagged exact (a pure function of the current state, ½mv², not integration-dependent); potential and total energy are tagged numerical only while every active body's gravitationalStrength = 1 (a genuine, symmetric potential energy), and downgrade to proxy the instant any body's strength differs — the pairwise force stops being symmetric and conservation breaks by construction, not by integrator error. Momentum is tagged numerical: physically conserved under uniform strengths, but it still drifts under the integrator in practice.",
+        "Cada cuerpo lleva un multiplicador experimental gravitationalStrength (effectiveMass = mass × gravitationalStrength) sin significado físico propio. La energía cinética siempre se etiqueta exact (función pura del estado actual, ½mv², no depende de la integración); la energía potencial y total se etiquetan numerical solo mientras todo cuerpo activo tenga gravitationalStrength = 1 (una energía potencial genuina y simétrica), y bajan a proxy en cuanto la fuerza de algún cuerpo difiere — la fuerza por pares deja de ser simétrica y la conservación se rompe por construcción, no por error del integrador. El momento se etiqueta numerical: conservado físicamente con fuerzas uniformes, pero igual deriva bajo el integrador en la práctica.",
+      ),
+      h("Space-time deformation is a proxy, not the metric", "La “deformación” del espacio-tiempo es un proxy, no la métrica"),
+      p(
+        "The optional Space-time deform. surface renders a rubber-sheet height field of the effective potential Φ (Plummer-softened) over the x,y plane — a pedagogical visualization of Φ, explicitly NOT the Einstein metric or a solution of any field equation.",
+        "La superficie opcional Space-time deform. dibuja un campo de altura tipo “sábana elástica” del potencial efectivo Φ (suavizado tipo Plummer) sobre el plano x,y — una visualización pedagógica de Φ, explícitamente NO la métrica de Einstein ni solución de ecuación de campo alguna.",
+      ),
+      h("General Relativity mode", "Modo General Relativity"),
+      p(
+        "Minkowski, Schwarzschild and Kerr are exact analytic solutions of the vacuum Einstein field equations — flat spacetime; a static, spherically symmetric mass; a rotating, axisymmetric mass — not a numerical solver for the Einstein equations. Each metric's components are stored as source-expression strings and parsed through the same core parser used everywhere else in the app (ADR-004): known closed-form metrics plugged into one generic differential-geometry engine.",
+        "Minkowski, Schwarzschild y Kerr son soluciones analíticas exactas de las ecuaciones de campo de Einstein en el vacío — espacio-tiempo plano; una masa estática y esféricamente simétrica; una masa rotante y axisimétrica — no un solver numérico de las ecuaciones de Einstein. Los componentes de cada métrica se guardan como cadenas de expresión fuente y se parsean con el mismo parser del núcleo usado en el resto de la app (ADR-004): métricas de forma cerrada conocidas conectadas a un único motor genérico de geometría diferencial.",
+      ),
+      p(
+        "That engine is metric-agnostic and runs unchanged for all three metrics: the inverse metric, then Christoffel symbols Γ — differentiated symbolically from g_μν and tagged exact — then the Riemann/Ricci/Einstein tensors, obtained by numerically differentiating the already-exact Christoffel function via central finite differences and tagged numerical (a finite-difference proxy for an otherwise-exact tensor, a strictly weaker confidence than Christoffel itself).",
+        "Ese motor es agnóstico a la métrica y corre sin cambios para las tres: la métrica inversa, luego los símbolos de Christoffel Γ — derivados simbólicamente de g_μν y etiquetados exact — luego los tensores de Riemann/Ricci/Einstein, obtenidos derivando numéricamente la función de Christoffel ya exacta por diferencias finitas centradas, etiquetados numerical (un proxy por diferencias finitas de un tensor por lo demás exacto, una confianza estrictamente más débil que la del propio Christoffel).",
+      ),
+      math(String.raw`\Gamma^{\mu}_{\ \alpha\beta} = \tfrac{1}{2}\,g^{\mu\nu}\left(\partial_\alpha g_{\nu\beta}+\partial_\beta g_{\nu\alpha}-\partial_\nu g_{\alpha\beta}\right)`),
+      math(String.raw`\begin{aligned}
+R^{\rho}_{\ \sigma\mu\nu} &= \partial_\mu \Gamma^{\rho}_{\ \nu\sigma} - \partial_\nu \Gamma^{\rho}_{\ \mu\sigma} + \Gamma^{\rho}_{\ \mu\lambda}\Gamma^{\lambda}_{\ \nu\sigma} - \Gamma^{\rho}_{\ \nu\lambda}\Gamma^{\lambda}_{\ \mu\sigma} \\[2pt]
+R_{\mu\nu} &= R^{\rho}_{\ \mu\rho\nu}, \qquad R = g^{\mu\nu}R_{\mu\nu} \\[2pt]
+G_{\mu\nu} &= R_{\mu\nu} - \tfrac{1}{2}g_{\mu\nu}R
+\end{aligned}`),
+      p(
+        "Geodesic integration reuses the shared ODE solver registry (rk4/rkf45/…), packing position and 4-velocity into one 8-dimensional state exactly like the Mathematical Field probes above:",
+        "La integración de la geodésica reutiliza el mismo registro de solvers EDO compartido (rk4/rkf45/…), empaquetando posición y 4-velocidad en un único estado de 8 dimensiones, igual que las sondas de Mathematical Field anteriores:",
+      ),
+      math(String.raw`\frac{dx^{\mu}}{d\tau} = u^{\mu}, \qquad \frac{du^{\mu}}{d\tau} = -\,\Gamma^{\mu}_{\ \alpha\beta}\,u^{\alpha}u^{\beta}`),
+      h("Frame dragging (ZAMO)", "Arrastre de marco (ZAMO)"),
+      p(
+        "For a spinning Kerr hole, a zero-angular-momentum test particle (ZAMO) is launched with u^φ = ω(x)·u^t, where ω = −g_tφ/g_φφ. Because axisymmetry conserves L = g_tφu^t + g_φφu^φ along any geodesic in this metric family, that particle keeps L = 0 for its ENTIRE trajectory yet still has nonzero dφ/dτ wherever ω ≠ 0 — real frame dragging read straight off the conserved-quantity structure of the metric, not an animation trick. It vanishes identically for Minkowski/Schwarzschild (g_tφ = 0), which is the correct sanity check.",
+        "Para un agujero de Kerr en rotación, una partícula de prueba de momento angular cero (ZAMO) se lanza con u^φ = ω(x)·u^t, donde ω = −g_tφ/g_φφ. Como la axisimetría conserva L = g_tφu^t + g_φφu^φ a lo largo de cualquier geodésica en esta familia de métricas, esa partícula mantiene L = 0 en TODA su trayectoria pero igual tiene dφ/dτ distinto de cero donde ω ≠ 0 — arrastre de marco real, leído directamente de la estructura de cantidades conservadas de la métrica, no un truco de animación. Se anula idénticamente para Minkowski/Schwarzschild (g_tφ = 0), que es la comprobación de cordura correcta.",
+      ),
+      math(String.raw`\omega(x) = -\frac{g_{t\phi}}{g_{\phi\phi}}, \qquad u^{\phi}=\omega(x)\,u^{t}\ \Rightarrow\ L = g_{t\phi}u^{t}+g_{\phi\phi}u^{\phi}=0`),
+      p(
+        "The 3D trace is a coordinate-position plot of the integrated geodesic (spherical→Cartesian for Schwarzschild/Kerr) — captioned in the UI explicitly as not a literal spacetime embedding.",
+        "La traza 3D es un gráfico de posición-coordenada de la geodésica integrada (esférico→cartesiano para Schwarzschild/Kerr) — rotulada en la UI explícitamente como que no es una inmersión (embedding) literal del espacio-tiempo.",
+      ),
+      h("Click-to-spawn", "Clic para crear"),
+      p(
+        "All three modes share one body-preset picker — Particle, Planet, Star, Black Hole, Singularity — and one click-to-place flow. In Gravity mode a spawned body is a real N-body participant: its preset's mass, radius, softening and absorption radius feed straight into the physics. In Mathematical Field and General Relativity mode the SAME preset only supplies a marker's type and appearance (and, for GR, the clicked position converted into that metric's native coordinates) — mass, softening and absorption radius are never read for those two modes, so a preset can never leak physics parameters into a model it doesn't belong to.",
+        "Los tres modos comparten un mismo selector de presets de cuerpo — Particle, Planet, Star, Black Hole, Singularity — y un mismo flujo de clic-para-colocar. En modo Gravity un cuerpo creado es un participante N-body real: la masa, radio, softening y radio de absorción del preset alimentan directamente la física. En Mathematical Field y General Relativity el MISMO preset solo aporta el tipo y apariencia del marcador (y, en GR, la posición del clic convertida a las coordenadas nativas de esa métrica) — masa, softening y radio de absorción nunca se leen en esos dos modos, así un preset nunca puede filtrar parámetros físicos a un modelo al que no pertenece.",
+      ),
+    ],
+  },
   // ─── PHASE IV — ODEs ─────────────────────────────────────────────────────────
   {
     id: "odes",
