@@ -20,7 +20,8 @@ function useDerivative(source: string): { text: string; error: string | null } {
   }, [source]);
 }
 
-export function ExpressionPanel() {
+/** Custom-expression editor (bare content; hosted inside a Collapsible). */
+export function ExpressionControls() {
   const activeId = useStore((s) => s.activeId);
   const domain = !!FRACTAL_BY_ID[activeId].domain;
   const source = useStore((s) => (domain ? s.complexExpr : s.customExpr));
@@ -30,16 +31,14 @@ export function ExpressionPanel() {
   const examples = domain ? EXAMPLES_Z : EXAMPLES_ZC;
 
   return (
-    <div className="border-b border-white/5 px-4 py-3">
-      <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">
-        {domain ? "f(z) =" : "f(z, c) ="}
-      </h2>
+    <>
+      <p className="mb-1.5 font-mono text-[11px] text-stone-400">{domain ? "f(z) =" : "f(z, c) ="}</p>
       <input
         value={source}
         spellCheck={false}
         onChange={(e) => setExpr(e.target.value)}
-        className={`w-full rounded bg-stone-800/80 px-2 py-1.5 font-mono text-sm text-vermilion-100 outline-none focus:ring-1 ${
-          exprError ? "ring-1 ring-red-500/60" : "focus:ring-vermilion-400"
+        className={`w-full rounded-md bg-black/30 px-2 py-1.5 font-mono text-sm text-vermilion-100 outline-none ring-1 ${
+          exprError ? "ring-red-500/60" : "ring-line focus:ring-vermilion-400/60"
         }`}
       />
       {exprError ? (
@@ -63,6 +62,6 @@ export function ExpressionPanel() {
       <p className="mt-2 text-[10px] text-stone-600">
         vars: z, c, i, p · fns: sin cos tan exp ln log sqrt conjugate · p = exponent slider
       </p>
-    </div>
+    </>
   );
 }

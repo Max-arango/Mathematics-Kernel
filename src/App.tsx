@@ -1,8 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FractalCanvas, type Stats } from "./components/FractalCanvas.tsx";
-import { Sidebar } from "./components/Sidebar.tsx";
-import { Topbar } from "./components/Topbar.tsx";
-import { StatusBar } from "./components/StatusBar.tsx";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { GraphView } from "./components/graph/GraphView.tsx";
 import { BlochView } from "./components/bloch/BlochView.tsx";
 import { FourDView } from "./components/fourd/FourDView.tsx";
@@ -13,7 +9,7 @@ import { useNotebook } from "./experiment/notebookStore.ts";
 import { searchMath, type SearchEntry } from "./search/mathSearch.ts";
 import { LogoMark } from "./components/Logo.tsx";
 import { HomeView } from "./components/HomeView.tsx";
-import { CanvasControls } from "./components/CanvasControls.tsx";
+import { FractalWorkspace } from "./components/fractal/FractalWorkspace.tsx";
 
 // KaTeX-heavy views are lazy-loaded to keep the initial bundle lean.
 const DocsView = lazy(() => import("./components/docs/DocsView.tsx").then((m) => ({ default: m.DocsView })));
@@ -138,11 +134,6 @@ function ModeNav() {
 export function App() {
   useAnimDriver();
   const appMode = useStore((s) => s.appMode);
-  const [stats, setStats] = useState<Stats>({ fps: 0, ms: 0, width: 0, height: 0 });
-  const onStats = useCallback(
-    (s: Stats) => setStats((prev) => (s.ms < 0 ? { ...prev, fps: s.fps, width: s.width, height: s.height } : s)),
-    [],
-  );
 
   if (appMode === "home") return <HomeView />;
 
@@ -176,17 +167,7 @@ export function App() {
           <DocsView />
         </Suspense>
       ) : (
-        <>
-          <Topbar stats={stats} />
-          <div className="flex min-h-0 flex-1">
-            <Sidebar />
-            <main className="relative min-w-0 flex-1">
-              <FractalCanvas onStats={onStats} />
-              <CanvasControls />
-            </main>
-          </div>
-          <StatusBar />
-        </>
+        <FractalWorkspace />
       )}
     </div>
   );

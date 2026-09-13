@@ -1,11 +1,12 @@
 import { useStore, type AnimMode } from "../store.ts";
 import { FRACTAL_BY_ID } from "../fractals/registry.ts";
-import { rangeFill } from "./Sidebar.tsx";
+import { rangeFill } from "./fractal/controls.tsx";
 
 const MODES: AnimMode[] = ["loop", "pingpong", "once"];
 const MODE_LABEL: Record<AnimMode, string> = { loop: "Loop", pingpong: "Ping-pong", once: "Once" };
 
-export function AnimatePanel() {
+/** Parameter-animation controls (bare content; hosted inside a Collapsible). */
+export function AnimateControls() {
   const activeId = useStore((s) => s.activeId);
   const anim = useStore((s) => s.anim);
   const setAnim = useStore((s) => s.setAnim);
@@ -13,17 +14,12 @@ export function AnimatePanel() {
   const animToggle = useStore((s) => s.animToggle);
 
   const params = FRACTAL_BY_ID[activeId].params;
-  const num = "w-20 rounded-md bg-stone-800/70 px-1.5 py-0.5 text-right font-mono text-vermilion-200 tabular-nums outline-none ring-1 ring-line focus:ring-vermilion-400/60";
+  const num = "w-20 rounded-md bg-black/30 px-1.5 py-0.5 text-right font-mono text-vermilion-200 tabular-nums outline-none ring-1 ring-line focus:ring-vermilion-400/60";
 
   return (
-    <div className="border-b border-line px-4 py-3.5">
-      <h2 className="mono-label mb-2.5 flex items-center gap-2 text-vermilion-300/80">
-        <span aria-hidden className="inline-block size-[6px] bg-vermilion-400" />
-        Animate
-      </h2>
-
+    <>
       <select
-        className="mb-2 w-full rounded-md bg-stone-800/70 px-2 py-1.5 text-sm text-stone-200 outline-none ring-1 ring-line focus:ring-vermilion-400/60"
+        className="mb-2 w-full rounded-md bg-black/30 px-2 py-1.5 text-sm text-stone-200 outline-none ring-1 ring-line focus:ring-vermilion-400/60"
         value={anim.key ?? ""}
         onChange={(e) => (e.target.value ? animBind(e.target.value) : setAnim({ key: null, playing: false }))}
       >
@@ -95,6 +91,6 @@ export function AnimatePanel() {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 }
