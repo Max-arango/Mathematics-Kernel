@@ -208,7 +208,7 @@ export function HomeView() {
         </div>
 
         {/* Direct prompt + search */}
-        <div className="fade-up pt-12 sm:pt-16">
+        <div className="fade-up relative z-30 pt-12 sm:pt-16">
           <h1 className="font-display text-3xl leading-tight tracking-tight text-ink sm:text-[2.5rem]">
             What do you want to explore?
           </h1>
@@ -248,7 +248,7 @@ export function HomeView() {
 
         {/* Tools */}
         <p className="mono-label mt-12 mb-3 text-graphite">All workspaces</p>
-        <div className="grid gap-3 pb-14 sm:grid-cols-2">
+        <div className="relative z-0 grid gap-3 pb-14 sm:grid-cols-2">
           {WORKSPACES.map((ws, i) => (
             <button
               key={ws.id}
