@@ -67,7 +67,10 @@ export type MathObject =
   | { kind: "vector"; data: number[] }
   | { kind: "topology"; surfaceId: string }
   | { kind: "dynamicalSystem"; vars: string[]; fieldSource: string[]; params?: Record<string, number>; systemKind: "continuous" | "discrete" }
-  | { kind: "ode"; vars: string[]; fieldSource: string[]; params?: Record<string, number>; y0: number[]; t0: number; t1: number; method?: string };
+  | { kind: "ode"; vars: string[]; fieldSource: string[]; params?: Record<string, number>; y0: number[]; t0: number; t1: number; method?: string }
+  | { kind: "distribution"; name: string; params: Record<string, number>; seed?: number }
+  | { kind: "dataset"; source: "samples" | "xy" | "matrix"; data: number[] | number[][] }
+  | { kind: "timeSeries"; t: number[]; y: number[] };
 
 // Small builders keep the inspector modules terse.
 export const prop = (label: string, value: string, confidence: Confidence, extra: Partial<Property> = {}): Property =>

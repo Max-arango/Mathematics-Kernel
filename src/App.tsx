@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FractalCanvas, type Stats } from "./components/FractalCanvas.tsx";
 import { Sidebar } from "./components/Sidebar.tsx";
 import { Topbar } from "./components/Topbar.tsx";
@@ -9,6 +9,8 @@ import { FourDView } from "./components/fourd/FourDView.tsx";
 import { TopoView } from "./components/topo/TopoView.tsx";
 import { DynamicsView } from "./components/dynamics/DynamicsView.tsx";
 import { useStore, type AppMode } from "./store.ts";
+import { useNotebook } from "./experiment/notebookStore.ts";
+import { searchMath, type SearchEntry } from "./search/mathSearch.ts";
 
 // KaTeX-heavy views are lazy-loaded to keep the initial bundle lean.
 const DocsView = lazy(() => import("./components/docs/DocsView.tsx").then((m) => ({ default: m.DocsView })));
@@ -30,6 +32,59 @@ function useAnimDriver() {
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, []);
+}
+
+function MathSearch() {
+  const setAppMode = useStore((s) => s.setAppMode);
+  const loadExample = useNotebook((s) => s.loadExample);
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const hits = useMemo(() => (query.trim() ? searchMath(query) : []), [query]);
+
+  const go = (e: SearchEntry) => {
+    setQuery("");
+    setOpen(false);
+    if (e.kind === "workspace") {
+      setAppMode(e.route as AppMode);
+    } else if (e.kind === "doc") {
+      setAppMode("docs");
+      // Scroll after the lazy DocsView mounts.
+      setTimeout(() => document.getElementById(`doc-${e.route}`)?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+    } else if (e.kind === "example") {
+      setAppMode("notebook");
+      setTimeout(() => loadExample(e.route), 0);
+    } else {
+      setAppMode("inspector");
+    }
+  };
+
+  const kindLabel: Record<SearchEntry["kind"], string> = { workspace: "wsp", doc: "doc", capability: "cap", example: "ex" };
+
+  return (
+    <div className="relative ml-auto" ref={boxRef}>
+      <input
+        value={query}
+        onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        placeholder="Search… (eigenvalue, RK4, Lorenz, …)"
+        className="w-56 rounded bg-white/5 px-2 py-1 text-xs text-slate-200 outline-none ring-1 ring-white/10 focus:ring-cyan-400/40"
+      />
+      {open && query.trim() && (
+        <div className="absolute right-0 top-full z-50 mt-1 max-h-72 w-72 overflow-y-auto rounded border border-white/10 bg-[#0a0e18] shadow-xl">
+          {hits.length === 0 && <div className="px-3 py-2 text-xs text-slate-500">No matches</div>}
+          {hits.map((h) => (
+            <button key={h.id} onMouseDown={() => go(h)}
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-300 hover:bg-white/5">
+              <span className="rounded bg-white/5 px-1 text-[9px] uppercase text-slate-500">{kindLabel[h.kind]}</span>
+              <span className="truncate">{h.title}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function ModeNav() {
@@ -61,6 +116,7 @@ function ModeNav() {
           {t.label}
         </button>
       ))}
+      <MathSearch />
     </div>
   );
 }
