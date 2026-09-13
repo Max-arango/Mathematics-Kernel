@@ -8,6 +8,7 @@ import { ExpressionList } from "./ExpressionList.tsx";
 import { Plot2D } from "./Plot2D.tsx";
 import { Plot3D } from "./Plot3D.tsx";
 import { AnalysisBar } from "./AnalysisBar.tsx";
+import { WorkspaceShell } from "../workspace/WorkspaceShell.tsx";
 
 export function GraphView() {
   const lines = useGraph((s) => s.lines);
@@ -67,31 +68,30 @@ export function GraphView() {
   }, [trace, scene, mode]);
 
   return (
-    <div className="flex min-h-0 flex-1">
-      <ExpressionList scene={scene} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        {mode === "2d" && <AnalysisBar scene={scene} />}
-        <main className="relative min-h-0 min-w-0 flex-1">
-        {mode === "2d" ? <Plot2D scene={scene} onTrace={setTrace} /> : <Plot3D scene={scene} />}
-        {mode === "2d" && (
-          <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-3 py-1.5 font-mono text-[11px] tabular-nums text-stone-300">
-            {trace ? (
-              <>
-                x = {trace.x.toFixed(4)} &nbsp; y = {trace.y.toFixed(4)}
-                {readout && Number.isFinite(readout.fx) && (
-                  <>
-                    {"  "}· f(x) = <span className="text-vermilion-300">{readout.fx.toFixed(4)}</span>
-                    {"  "}· f'(x) = <span className="text-emerald-300">{readout.dfx.toFixed(4)}</span>
-                  </>
-                )}
-              </>
-            ) : (
-              "move cursor over graph to trace"
-            )}
-          </div>
-        )}
-        </main>
-      </div>
-    </div>
+    <WorkspaceShell title="Calculator" panelWidth={320} panel={<ExpressionList scene={scene} />}>
+      {mode === "2d" ? <Plot2D scene={scene} onTrace={setTrace} /> : <Plot3D scene={scene} />}
+      {mode === "2d" && (
+        <div className="absolute right-3 top-[68px] z-10 max-w-[calc(100%-1.5rem)]">
+          <AnalysisBar scene={scene} />
+        </div>
+      )}
+      {mode === "2d" && (
+        <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-lg border border-line bg-void-soft/75 px-3 py-1.5 font-mono text-[11px] tabular-nums text-stone-300 backdrop-blur-md">
+          {trace ? (
+            <>
+              x = {trace.x.toFixed(4)} &nbsp; y = {trace.y.toFixed(4)}
+              {readout && Number.isFinite(readout.fx) && (
+                <>
+                  {"  "}· f(x) = <span className="text-vermilion-300">{readout.fx.toFixed(4)}</span>
+                  {"  "}· f'(x) = <span className="text-emerald-300">{readout.dfx.toFixed(4)}</span>
+                </>
+              )}
+            </>
+          ) : (
+            "move cursor over graph to trace"
+          )}
+        </div>
+      )}
+    </WorkspaceShell>
   );
 }

@@ -7,6 +7,7 @@
 // NOT a 2D fake (§6). This is an EFFECTIVE gravitational-field model — a visual
 // space-time approximation, NOT the Einstein metric (§2, §37).
 import { useEffect, useMemo, useRef, useState } from "react";
+import { WorkspaceShell } from "../workspace/WorkspaceShell.tsx";
 import { perspective, multiply, orbitViewAt, orbitBasis, type Mat4 } from "../graph/mat4.ts";
 import { norm } from "../../mathlab/linear/vector.ts";
 import {
@@ -1142,9 +1143,11 @@ export function Dynamics3DView() {
   const mfInputCls = "flex-1 rounded bg-stone-800/80 px-2 py-1 font-mono text-sm text-vermilion-100 outline-none focus:ring-1 focus:ring-vermilion-400";
 
   return (
-    <div className="flex min-h-0 flex-1">
-      {/* left controls */}
-      <aside className="flex w-72 shrink-0 flex-col gap-3 overflow-y-auto border-r border-white/5 bg-[#1c1b18] p-3 text-stone-300">
+    <WorkspaceShell
+      title="Dynamics 3D"
+      panelWidth={288}
+      panel={
+        <div className="flex flex-col gap-3 p-3 text-stone-300">
         <div>
           <h2 className="text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">Space-Time Dynamics 3D</h2>
           <p className="mt-1 text-[10px] leading-snug text-stone-500">
@@ -1458,26 +1461,25 @@ export function Dynamics3DView() {
           </div>
         </div>
         )}
-      </aside>
-
-      {/* 3D canvas */}
-      <main className="relative min-w-0 flex-1">
+        </div>
+      }
+    >
         <canvas ref={canvasRef} className="h-full w-full touch-none" style={{ display: "block", cursor: "grab" }}
           onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onWheel={onWheel} onContextMenu={(e) => e.preventDefault()} />
         {/* system readout */}
         {modelMode === "gravity" ? (
-        <div className="pointer-events-none absolute left-2 top-2 rounded bg-black/50 px-2 py-1 font-mono text-[10px] text-stone-300">
+        <div className="pointer-events-none absolute left-1/2 top-[68px] z-10 -translate-x-1/2 rounded-lg border border-line bg-void-soft/80 backdrop-blur-md px-2 py-1 font-mono text-[10px] text-stone-300">
           t = {rep.time.toFixed(3)} · steps {rep.steps} · dt {sim.dt.toFixed(3)} · bodies {rep.activeBodies}<br />
           E = {rep.total.toExponential(3)} · |p| = {rep.momentumMagnitude.toExponential(2)}<br />
           <span className={rep.energyDrift > 0.05 ? "text-amber-400" : "text-stone-500"}>ΔE {(rep.energyDrift * 100).toFixed(2)}%</span> ·
           {" "}<span className={rep.momentumDrift > 0.05 ? "text-amber-400" : "text-stone-500"}>Δp {(rep.momentumDrift * 100).toFixed(2)}%</span> · {rep.status}
         </div>
         ) : modelMode === "mathfield" ? (
-        <div className="pointer-events-none absolute left-2 top-2 rounded bg-black/50 px-2 py-1 font-mono text-[10px] text-stone-300">
+        <div className="pointer-events-none absolute left-1/2 top-[68px] z-10 -translate-x-1/2 rounded-lg border border-line bg-void-soft/80 backdrop-blur-md px-2 py-1 font-mono text-[10px] text-stone-300">
           Mathematical Field — dx/dt={mfx || "0"}, dy/dt={mfy || "0"}, dz/dt={mfz || "0"}
         </div>
         ) : (
-        <div className="pointer-events-none absolute left-2 top-2 rounded bg-black/50 px-2 py-1 font-mono text-[10px] text-stone-300">
+        <div className="pointer-events-none absolute left-1/2 top-[68px] z-10 -translate-x-1/2 rounded-lg border border-line bg-void-soft/80 backdrop-blur-md px-2 py-1 font-mono text-[10px] text-stone-300">
           General Relativity — {grModel.name} ({grModel.chart})<br />
           {grMetricId !== "minkowski" && <>M={grM.toFixed(2)}{grMetricId === "kerr" ? `, a=${grA.toFixed(2)}` : ""} · </>}
           τ₁={grTau1} · h={grH.toFixed(3)} · points {grCache.current.points.length}<br />
@@ -1486,10 +1488,10 @@ export function Dynamics3DView() {
           </span>
         </div>
         )}
-        <div className="pointer-events-none absolute bottom-2 right-2 text-right text-[10px] text-stone-600">drag orbit · shift/right-drag pan · WASD/QE fly · wheel zoom · click select</div>
+        <div className="pointer-events-none absolute bottom-3 right-3 z-10 rounded-md border border-line bg-void-soft/70 px-2 py-1 text-right text-[10px] text-stone-500 backdrop-blur-md">drag orbit · shift/right-drag pan · WASD/QE fly · wheel zoom · click select</div>
 
         {debug && (
-          <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-2 py-1 font-mono text-[10px] text-emerald-300">
+          <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-lg border border-line bg-void-soft/80 px-2 py-1 font-mono text-[10px] text-emerald-300 backdrop-blur-md">
             {perf.current.fps.toFixed(0)} fps · drawn {perf.current.drawn}/{rep.activeBodies}<br />
             mode {effectiveRenderMode(visualRef.current)} · quality {quality} · scale {bodyScale.toFixed(1)}x
           </div>
@@ -1497,7 +1499,7 @@ export function Dynamics3DView() {
 
         {/* inspector overlay */}
         {modelMode === "gravity" && selected && (
-          <div className="absolute right-2 top-2 w-60 rounded bg-black/70 p-2 text-[11px] text-stone-300 backdrop-blur">
+          <div className="absolute right-3 top-[68px] z-10 w-60 rounded-lg border border-line bg-void-soft/85 p-2 text-[11px] text-stone-300 backdrop-blur-md">
             <div className="mb-1 flex items-center justify-between">
               <span className="font-semibold" style={{ color: TYPE_COLOR[selected.type] }}>{selected.name}</span>
               <button onClick={() => removeBody(selected.id)} className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] hover:bg-red-500/20">remove</button>
@@ -1532,8 +1534,7 @@ export function Dynamics3DView() {
             </div>
           </div>
         )}
-      </main>
-    </div>
+    </WorkspaceShell>
   );
 }
 

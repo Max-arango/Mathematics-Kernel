@@ -14,7 +14,7 @@ export function ExpressionList({ scene }: { scene: Scene }) {
   const sliders = scene.sliders;
 
   return (
-    <aside className="flex w-80 shrink-0 flex-col overflow-y-auto border-r border-white/5 bg-[#1c1b18]">
+    <div className="flex flex-col">
       <div className="flex gap-1 border-b border-white/5 p-2">
         {(["2d", "3d"] as const).map((m) => (
           <button
@@ -71,7 +71,7 @@ export function ExpressionList({ scene }: { scene: Scene }) {
           ))}
         </div>
       )}
-    </aside>
+    </div>
   );
 }
 

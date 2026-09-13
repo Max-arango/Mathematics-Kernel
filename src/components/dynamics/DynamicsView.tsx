@@ -3,6 +3,7 @@
 // mathlab/dynamics/*; no parsing, evaluation, integration or eigensolving
 // happens here — those are the math core's job.
 import { useEffect, useMemo, useRef, useState } from "react";
+import { WorkspaceShell } from "../workspace/WorkspaceShell.tsx";
 import { makeSystem, evalField, jacobianField, type DynamicalSystem } from "../../mathlab/dynamics/system.ts";
 import { findEquilibria } from "../../mathlab/dynamics/equilibria.ts";
 import { classifyEquilibrium, type Classification, type StabilityResult } from "../../mathlab/dynamics/stability.ts";
@@ -757,8 +758,11 @@ export function DynamicsView() {
     selectedEq !== null && equilibria[selectedEq] ? equilibria[selectedEq] : null;
 
   return (
-    <div className="flex min-h-0 flex-1">
-      <aside className="flex w-80 shrink-0 flex-col gap-3 overflow-y-auto border-r border-white/5 bg-[#1c1b18] p-3">
+    <WorkspaceShell
+      title="Dynamics"
+      panelWidth={320}
+      panel={
+        <div className="flex flex-col gap-3 p-3">
         <div>
           <h2 className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">System ẋ = f(x,y)</h2>
           <div className="mb-1 flex items-center gap-1"><span className="w-8 font-mono text-xs text-stone-400">ẋ =</span><input className={inputCls} value={fx} spellCheck={false} onChange={(e) => setFx(e.target.value)} /></div>
@@ -980,8 +984,9 @@ export function DynamicsView() {
           <p>Trails — <span style={{ color: "#38e0c8" }}>cyan=forward</span> · <span style={{ color: "#fb923c" }}>amber=backward</span>. Ends — pink=eq · slate=escaped · violet=out of domain · amber=timeout · red=fail.</p>
           <p>Analysis — <span style={{ color: MANIFOLD_STABLE }}>Wˢ</span>/<span style={{ color: MANIFOLD_UNSTABLE }}>Wᵘ</span> manifolds · basins tint by attractor (all numerical approximations).</p>
         </div>
-      </aside>
-      <main className="relative min-w-0 flex-1">
+        </div>
+      }
+    >
         <canvas
           ref={ref}
           className="h-full w-full touch-none"
@@ -992,12 +997,11 @@ export function DynamicsView() {
           onPointerLeave={onPointerLeave}
           onWheel={onWheel}
         />
-        <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/40 px-2 py-1 font-mono text-[10px] text-stone-400">
+        <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-lg border border-line bg-void-soft/75 px-2.5 py-1 font-mono text-[10px] text-stone-400 backdrop-blur-md">
           t = {(lastTerminated?.elapsedTime ?? trajectories.current[0]?.elapsedTime ?? 0).toFixed(2)} ·
           {" "}dt = 0.02 · span = {view.span.toFixed(2)}
         </div>
-      </main>
-    </div>
+    </WorkspaceShell>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Plot4D } from "./Plot4D.tsx";
+import { WorkspaceShell } from "../workspace/WorkspaceShell.tsx";
 import { useFour, type ShapeKind } from "../../fourd/fourStore.ts";
 import { POLYTOPES, POLYTOPE_LABELS } from "../../fourd/shapes.ts";
 import { buildParametric, PARAM_PRESETS } from "../../fourd/parametric.ts";
@@ -39,8 +40,11 @@ export function FourDView() {
   const exprIn = "w-full rounded bg-stone-800/80 px-1.5 py-1 font-mono text-[12px] text-vermilion-100 outline-none focus:ring-1 focus:ring-vermilion-400";
 
   return (
-    <div className="flex min-h-0 flex-1">
-      <aside className="flex w-80 shrink-0 flex-col overflow-y-auto border-r border-white/5 bg-[#1c1b18]">
+    <WorkspaceShell
+      title="4D Geometry"
+      panelWidth={320}
+      panel={
+        <div className="flex flex-col">
         <Section title="Object">
           <div className="grid grid-cols-2 gap-1">
             {kinds.map((k) => (
@@ -100,15 +104,14 @@ export function FourDView() {
           </div>
           <p className="mt-1.5 text-[10px] text-stone-600">auto = double rotation (XW + YZ) · color = w (4th axis)</p>
         </Section>
-      </aside>
-
-      <main className="relative min-w-0 flex-1">
-        <Plot4D shape={built.shape} />
-        <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-3 py-1.5 font-mono text-[11px] text-stone-400">
-          {built.shape.vertices.length} vertices · {built.shape.edges.length} edges · color = 4th dimension (w) · drag = rotate 3D · wheel = zoom
         </div>
-      </main>
-    </div>
+      }
+    >
+      <Plot4D shape={built.shape} />
+      <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-lg border border-line bg-void-soft/75 px-3 py-1.5 font-mono text-[11px] text-stone-400 backdrop-blur-md">
+        {built.shape.vertices.length} vertices · {built.shape.edges.length} edges · color = 4th dimension (w) · drag = rotate 3D · wheel = zoom
+      </div>
+    </WorkspaceShell>
   );
 }
 

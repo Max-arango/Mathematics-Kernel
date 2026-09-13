@@ -40,7 +40,7 @@ export function AnalysisBar({ scene }: { scene: Scene }) {
   }, [body, scene.env, tool, a, b]);
 
   return (
-    <div className="flex flex-wrap items-center gap-3 border-b border-white/5 bg-[#1c1b18] px-3 py-1.5 text-xs">
+    <div className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-void-soft/85 px-3 py-1.5 text-xs shadow-lg backdrop-blur-xl">
       <div className="flex gap-1">
         {TOOLS.map((t) => (
           <button

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { BlochSphere } from "./BlochSphere.tsx";
+import { WorkspaceShell } from "../workspace/WorkspaceShell.tsx";
 import { ProbabilityBars } from "./ProbabilityBars.tsx";
 import { useBloch } from "../../bloch/blochStore.ts";
 import { angles, blochVector, ampString, pulseAxisAngle, type State } from "../../bloch/qubit.ts";
@@ -50,8 +51,11 @@ export function BlochView() {
   const deg = (r: number) => `${((r * 180) / Math.PI).toFixed(1)}°`;
 
   return (
-    <div className="flex min-h-0 flex-1">
-      <aside className="flex w-80 shrink-0 flex-col overflow-y-auto border-r border-white/5 bg-[#1c1b18]">
+    <WorkspaceShell
+      title="Bloch Sphere"
+      panelWidth={320}
+      panel={
+        <div className="flex flex-col">
         <Section title="Quantum gates">
           <div className="grid grid-cols-4 gap-1.5">
             {GATE_ROWS.flat().map((g) => (
@@ -125,23 +129,22 @@ export function BlochView() {
             {log.length ? log.slice(-12).map((l, i) => <div key={i}>{l}</div>) : <span>no operations</span>}
           </div>
         </Section>
-      </aside>
-
-      <main className="relative min-w-0 flex-1">
-        <BlochSphere />
-        <div className="absolute left-2 top-2">
-          <ProbabilityBars />
         </div>
-        <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-3 py-2 font-mono text-[11px] text-stone-300">
-          <div>|ψ⟩ = <span className="text-vermilion-300">{ampString(state[0])}</span> |0⟩ + <span className="text-vermilion-300">{ampString(state[1])}</span> |1⟩</div>
-          <div className="mt-1 text-stone-400">θ = {deg(theta)} &nbsp; φ = {deg(phi)}</div>
-          <div className="text-stone-400">Bloch = ({x.toFixed(3)}, {y.toFixed(3)}, {z.toFixed(3)})</div>
-        </div>
-        <div className="pointer-events-none absolute right-2 top-2 rounded bg-black/60 px-2 py-1 font-mono text-[10px] text-stone-500">
-          drag rotate · wheel zoom
-        </div>
-      </main>
-    </div>
+      }
+    >
+      <BlochSphere />
+      <div className="absolute right-3 top-[68px] z-10">
+        <ProbabilityBars />
+      </div>
+      <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-lg border border-line bg-void-soft/75 px-3 py-2 font-mono text-[11px] text-stone-300 backdrop-blur-md">
+        <div>|ψ⟩ = <span className="text-vermilion-300">{ampString(state[0])}</span> |0⟩ + <span className="text-vermilion-300">{ampString(state[1])}</span> |1⟩</div>
+        <div className="mt-1 text-stone-400">θ = {deg(theta)} &nbsp; φ = {deg(phi)}</div>
+        <div className="text-stone-400">Bloch = ({x.toFixed(3)}, {y.toFixed(3)}, {z.toFixed(3)})</div>
+      </div>
+      <div className="pointer-events-none absolute bottom-3 right-3 z-10 rounded-md border border-line bg-void-soft/70 px-2 py-1 font-mono text-[10px] text-stone-500 backdrop-blur-md">
+        drag rotate · wheel zoom
+      </div>
+    </WorkspaceShell>
   );
 }
 

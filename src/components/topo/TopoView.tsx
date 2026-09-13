@@ -1,4 +1,5 @@
 import { TopoSurface } from "./TopoSurface.tsx";
+import { WorkspaceShell } from "../workspace/WorkspaceShell.tsx";
 import { useTopo } from "../../topo/topoStore.ts";
 import { SURFACES, SURFACE_BY_ID } from "../../topo/surfaces.ts";
 import { homeomorphicSurfaces, classifySurface } from "../../topo/topology.ts";
@@ -14,8 +15,11 @@ export function TopoView() {
   const sel = "w-full rounded bg-stone-800/80 px-2 py-1.5 text-sm text-stone-200 outline-none focus:ring-1 focus:ring-vermilion-400";
 
   return (
-    <div className="flex min-h-0 flex-1">
-      <aside className="flex w-80 shrink-0 flex-col overflow-y-auto border-r border-white/5 bg-[#1c1b18]">
+    <WorkspaceShell
+      title="Topology"
+      panelWidth={320}
+      panel={
+        <div className="flex flex-col">
         <Section title="Object">
           <label className="mb-1 block text-[11px] text-stone-400">shape</label>
           <select className={sel} value={s.sourceId} onChange={(e) => s.setSource(e.target.value)}>
@@ -116,15 +120,14 @@ export function TopoView() {
             <input type="range" className="w-40" min={12} max={80} step={4} value={s.res} onChange={(e) => s.setRes(Number(e.target.value))} />
           </label>
         </Section>
-      </aside>
-
-      <main className="relative min-w-0 flex-1">
-        <TopoSurface />
-        <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-3 py-1.5 font-mono text-[11px] text-stone-400">
-          {src.label} {homeo && dst.id !== src.id ? `→ ${dst.label}` : ""} · genus {inv.genus ?? "—"} · χ = {inv.euler} · {s.mode} · drag {s.mode === "deform" ? "to pull" : "to rotate"}
         </div>
-      </main>
-    </div>
+      }
+    >
+      <TopoSurface />
+      <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-lg border border-line bg-void-soft/75 px-3 py-1.5 font-mono text-[11px] text-stone-400 backdrop-blur-md">
+        {src.label} {homeo && dst.id !== src.id ? `→ ${dst.label}` : ""} · genus {inv.genus ?? "—"} · χ = {inv.euler} · {s.mode} · drag {s.mode === "deform" ? "to pull" : "to rotate"}
+      </div>
+    </WorkspaceShell>
   );
 }
 
