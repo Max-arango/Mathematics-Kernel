@@ -13,6 +13,7 @@ import { useNotebook } from "./experiment/notebookStore.ts";
 import { searchMath, type SearchEntry } from "./search/mathSearch.ts";
 import { LogoMark } from "./components/Logo.tsx";
 import { HomeView } from "./components/HomeView.tsx";
+import { CanvasControls } from "./components/CanvasControls.tsx";
 
 // KaTeX-heavy views are lazy-loaded to keep the initial bundle lean.
 const DocsView = lazy(() => import("./components/docs/DocsView.tsx").then((m) => ({ default: m.DocsView })));
@@ -181,6 +182,7 @@ export function App() {
             <Sidebar />
             <main className="relative min-w-0 flex-1">
               <FractalCanvas onStats={onStats} />
+              <CanvasControls />
             </main>
           </div>
           <StatusBar />
