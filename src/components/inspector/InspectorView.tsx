@@ -4,6 +4,9 @@ import "katex/dist/katex.min.css";
 import { inspect, compare } from "../../inspector/engine.ts";
 import type { MathObject, Confidence, Property } from "../../inspector/types.ts";
 import { SURFACES } from "../../topo/surfaces.ts";
+import { methodsByFamily } from "../../mathlab/core/numericalMethods.ts";
+
+const ODE_METHODS = methodsByFamily("ODESolver");
 
 const CONF_COLOR: Record<Confidence, string> = {
   exact: "bg-emerald-500/15 text-emerald-300",
@@ -166,7 +169,7 @@ export function InspectorView() {
               <div><label className="text-[10px] uppercase text-slate-500">y₀</label><input className={inputCls} value={odeY0} onChange={(e) => setOdeY0(e.target.value)} /></div>
               <div><label className="text-[10px] uppercase text-slate-500">method</label>
                 <select className={inputCls} value={odeMethod} onChange={(e) => setOdeMethod(e.target.value)}>
-                  {["euler", "heun", "rk2", "rk4", "rkf45"].map((m) => <option key={m} value={m}>{m}</option>)}
+                  {ODE_METHODS.map((m) => <option key={m.name} value={m.name} title={m.description}>{m.name}</option>)}
                 </select>
               </div>
               <div><label className="text-[10px] uppercase text-slate-500">t₀</label><input className={inputCls} value={odeT0} onChange={(e) => setOdeT0(e.target.value)} /></div>
