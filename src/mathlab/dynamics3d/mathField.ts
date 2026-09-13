@@ -8,7 +8,7 @@
 // the vars.length === 3 trust boundary. Integration reuses ode/registry.solveODE,
 // same pattern as integrators.ts::stepRK4.
 import { InvalidInputError } from "../core/errors.ts";
-import { evalField, type DynamicalSystem } from "../dynamics/system.ts";
+import { evalField, jacobianField, divergenceField, type DynamicalSystem } from "../dynamics/system.ts";
 import { solveODE } from "../ode/registry.ts";
 import type { ODEFn } from "../ode/types.ts";
 import type { Vec3 } from "./types.ts";
@@ -26,6 +26,22 @@ export function evalMathField3D(sys: DynamicalSystem, p: Vec3): Vec3 {
   assert3D(sys);
   const v = evalField(sys, p);
   return [v[0], v[1], v[2]];
+}
+
+/**
+ * Curl of the user field at a 3D point, ∇×F = (∂Fz/∂y−∂Fy/∂z, ∂Fx/∂z−∂Fz/∂x,
+ * ∂Fy/∂x−∂Fx/∂y). Only defined in 3D (unlike divergenceField, which is
+ * dimension-generic), so it lives here rather than in dynamics/system.ts.
+ * Built from the shared symbolic jacobianField — no separate differentiation.
+ */
+export function curlField3D(sys: DynamicalSystem, p: Vec3): Vec3 {
+  assert3D(sys);
+  const j = jacobianField(sys, p);
+  return [
+    j[2][1] - j[1][2],
+    j[0][2] - j[2][0],
+    j[1][0] - j[0][1],
+  ];
 }
 
 export type MathIntegrator = "rk4" | "rkf45";
@@ -111,36 +127,111 @@ export interface MathFieldGridSample {
   vectors: Vec3[];
 }
 
+/** Pin one axis to a fixed value — confines a grid sample to that 2D plane. */
+export interface GridSlice {
+  axis: "x" | "y" | "z";
+  value: number;
+}
+
+const AXIS_INDEX: Record<"x" | "y" | "z", 0 | 1 | 2> = { x: 0, y: 1, z: 2 };
+
+function gridLerp(lo: number, hi: number, i: number, n: number): number {
+  return n === 1 ? (lo + hi) / 2 : lo + ((hi - lo) * i) / (n - 1);
+}
+
+/**
+ * Grid point positions over `bounds` at `resolution` per axis: the full
+ * resolution³ box, or — when `slice` is given — the resolution² plane where
+ * `slice.axis` is pinned to `slice.value`. Shared by every sample*Grid3D
+ * function below so they can't disagree on which points they sample (and the
+ * field/Jacobian is evaluated exactly once per point per sampler).
+ */
+function gridPoints3D(bounds: Box3, resolution: number, slice?: GridSlice): Vec3[] {
+  if (!Number.isInteger(resolution) || resolution < 1) {
+    throw new InvalidInputError(`resolution must be a positive integer, got ${resolution}`);
+  }
+  const n = resolution;
+  const points: Vec3[] = [];
+  if (slice) {
+    const pinned = AXIS_INDEX[slice.axis];
+    const [a0, a1] = ([0, 1, 2] as const).filter((a) => a !== pinned);
+    for (let i = 0; i < n; i++) {
+      const u = gridLerp(bounds.min[a0], bounds.max[a0], i, n);
+      for (let j = 0; j < n; j++) {
+        const v = gridLerp(bounds.min[a1], bounds.max[a1], j, n);
+        const p: Vec3 = [0, 0, 0];
+        p[pinned] = slice.value; p[a0] = u; p[a1] = v;
+        points.push(p);
+      }
+    }
+  } else {
+    for (let i = 0; i < n; i++) {
+      const x = gridLerp(bounds.min[0], bounds.max[0], i, n);
+      for (let j = 0; j < n; j++) {
+        const y = gridLerp(bounds.min[1], bounds.max[1], j, n);
+        for (let k = 0; k < n; k++) {
+          const z = gridLerp(bounds.min[2], bounds.max[2], k, n);
+          points.push([x, y, z]);
+        }
+      }
+    }
+  }
+  return points;
+}
+
 /**
  * Sample the field on a resolution³ grid over `bounds` — for drawing arrows. Cached
  * on demand by the caller (recompute only when source/params/resolution change);
- * not allocated per animation frame.
+ * not allocated per animation frame. With `slice` omitted, behavior is identical
+ * to the pre-slice version of this function (same point order, same lerp); with
+ * `slice` given, samples only the 2D plane where `slice.axis === slice.value`.
  */
 export function sampleMathFieldGrid3D(
   sys: DynamicalSystem,
   bounds: Box3,
   resolution: number,
+  slice?: GridSlice,
 ): MathFieldGridSample {
   assert3D(sys);
-  if (!Number.isInteger(resolution) || resolution < 1) {
-    throw new InvalidInputError(`resolution must be a positive integer, got ${resolution}`);
-  }
-  const n = resolution;
-  const lerp = (lo: number, hi: number, i: number) => (n === 1 ? (lo + hi) / 2 : lo + ((hi - lo) * i) / (n - 1));
+  const points = gridPoints3D(bounds, resolution, slice);
+  const vectors = points.map((p) => evalMathField3D(sys, p));
+  return { points, vectors };
+}
 
-  const points: Vec3[] = [];
-  const vectors: Vec3[] = [];
-  for (let i = 0; i < n; i++) {
-    const x = lerp(bounds.min[0], bounds.max[0], i);
-    for (let j = 0; j < n; j++) {
-      const y = lerp(bounds.min[1], bounds.max[1], j);
-      for (let k = 0; k < n; k++) {
-        const z = lerp(bounds.min[2], bounds.max[2], k);
-        const p: Vec3 = [x, y, z];
-        points.push(p);
-        vectors.push(evalMathField3D(sys, p));
-      }
-    }
-  }
+export interface MathFieldDivergenceSample {
+  points: Vec3[];
+  values: number[];
+}
+
+/** Sample ∇·F on a resolution³ grid (or a `slice` plane) — same shape/semantics
+ * as sampleMathFieldGrid3D, one scalar divergence per point. */
+export function sampleDivergenceGrid3D(
+  sys: DynamicalSystem,
+  bounds: Box3,
+  resolution: number,
+  slice?: GridSlice,
+): MathFieldDivergenceSample {
+  assert3D(sys);
+  const points = gridPoints3D(bounds, resolution, slice);
+  const values = points.map((p) => divergenceField(sys, p));
+  return { points, values };
+}
+
+export interface MathFieldCurlSample {
+  points: Vec3[];
+  vectors: Vec3[];
+}
+
+/** Sample ∇×F on a resolution³ grid (or a `slice` plane) — same shape/semantics
+ * as sampleMathFieldGrid3D, one curl vector per point. */
+export function sampleCurlGrid3D(
+  sys: DynamicalSystem,
+  bounds: Box3,
+  resolution: number,
+  slice?: GridSlice,
+): MathFieldCurlSample {
+  assert3D(sys);
+  const points = gridPoints3D(bounds, resolution, slice);
+  const vectors = points.map((p) => curlField3D(sys, p));
   return { points, vectors };
 }
