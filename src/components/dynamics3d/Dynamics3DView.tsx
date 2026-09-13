@@ -38,6 +38,7 @@ import { minkowski } from "../../mathlab/relativity/models/minkowski.ts";
 import { makeSchwarzschild } from "../../mathlab/relativity/models/schwarzschild.ts";
 import { makeKerr } from "../../mathlab/relativity/models/kerr.ts";
 import { normalizeTimelikeVelocity } from "../../mathlab/relativity/normalize.ts";
+import { zamoAngularVelocity, zamoInitialVelocity } from "../../mathlab/relativity/frameDragging.ts";
 import { integrateGeodesic, type GeodesicTermination } from "../../mathlab/relativity/geodesic.ts";
 import { cartesianToSpherical, sphericalToCartesian } from "../../mathlab/relativity/sphericalCoords.ts";
 import { hasValue } from "../../mathlab/core/result.ts";
@@ -69,7 +70,7 @@ export type GRMetricId = "minkowski" | "schwarzschild" | "kerr";
 
 interface GRControls {
   metricId: GRMetricId; M: number; a: number;
-  r0: number; vFrac: number;
+  r0: number; vFrac: number; zamoMode: boolean;
   x0: number; y0: number; z0: number; vx: number; vy: number; vz: number;
   tau1: number; h: number;
 }
@@ -106,20 +107,28 @@ function makeGRModel(id: GRMetricId, M: number, a: number): MetricModel {
  * marker geodesics (x0 from a clicked point), so both stay perfectly in sync.
  */
 function computeGRTraceFrom(model: MetricModel, ctl: GRControls, x0: number[]): Omit<GRTrace, "key"> {
-  let uSpatial: number[];
-  if (ctl.metricId === "minkowski") {
-    uSpatial = [ctl.vx, ctl.vy, ctl.vz];
+  let normRes;
+  if (ctl.zamoMode) {
+    // Zero-angular-momentum (ZAMO) spawn: u^phi = omega(x0)*u^t, so L=0 for the
+    // WHOLE geodesic (axisymmetric conservation) — the actual frame-dragging
+    // demonstration, not the vFrac circular-orbit approximation below.
+    normRes = zamoInitialVelocity(model, x0);
   } else {
-    // ponytail: dphi/dtau approximated by the standard circular-orbit dphi/dt
-    // rate at THIS x0's radius (a=0 reduces to Schwarzschild's sqrt(M/r^3)),
-    // scaled by vFrac — a simple, physically-flavored slider, not a rigorous
-    // ZAMO/ISCO solve.
-    const r = x0[1];
-    const aTerm = ctl.metricId === "kerr" ? ctl.a : 0;
-    const omega = Math.sqrt(ctl.M) / (Math.pow(r, 1.5) + aTerm * Math.sqrt(ctl.M));
-    uSpatial = [0, 0, ctl.vFrac * omega]; // u^r=0, u^theta=0, u^phi=vFrac*omega
+    let uSpatial: number[];
+    if (ctl.metricId === "minkowski") {
+      uSpatial = [ctl.vx, ctl.vy, ctl.vz];
+    } else {
+      // ponytail: dphi/dtau approximated by the standard circular-orbit dphi/dt
+      // rate at THIS x0's radius (a=0 reduces to Schwarzschild's sqrt(M/r^3)),
+      // scaled by vFrac — a simple, physically-flavored slider, not a rigorous
+      // ZAMO/ISCO solve.
+      const r = x0[1];
+      const aTerm = ctl.metricId === "kerr" ? ctl.a : 0;
+      const omega = Math.sqrt(ctl.M) / (Math.pow(r, 1.5) + aTerm * Math.sqrt(ctl.M));
+      uSpatial = [0, 0, ctl.vFrac * omega]; // u^r=0, u^theta=0, u^phi=vFrac*omega
+    }
+    normRes = normalizeTimelikeVelocity(model, x0, uSpatial);
   }
-  const normRes = normalizeTimelikeVelocity(model, x0, uSpatial);
   if (!hasValue(normRes)) {
     const reason = "reason" in normRes ? normRes.reason : undefined;
     return { points: [], termination: "domainError", error: reason ?? "no valid timelike velocity" };
@@ -134,9 +143,11 @@ function computeGRTraceFrom(model: MetricModel, ctl: GRControls, x0: number[]): 
 }
 
 /** Cache key for marker geodesics — the shared inputs (metric/M/a/vFrac/velocity/
- *  tau1/h) each marker's trace depends on, independent of its own x0. */
+ *  zamoMode/tau1/h) each marker's trace depends on, independent of its own x0.
+ *  zamoMode must be included so toggling it invalidates markers spawned under
+ *  the other velocity-construction path instead of reusing a stale trace. */
 function grMarkerKey(ctl: GRControls): string {
-  return `${ctl.metricId}|${ctl.M}|${ctl.a}|${ctl.vFrac}|${ctl.vx}|${ctl.vy}|${ctl.vz}|${ctl.tau1}|${ctl.h}`;
+  return `${ctl.metricId}|${ctl.M}|${ctl.a}|${ctl.vFrac}|${ctl.zamoMode}|${ctl.vx}|${ctl.vy}|${ctl.vz}|${ctl.tau1}|${ctl.h}`;
 }
 
 /** Build (x0, spatial u) from the simple UI controls (r0/x0/y0/z0 sliders). */
@@ -245,6 +256,8 @@ export function Dynamics3DView() {
   const [grA, setGrA] = useState(0.5);
   const [grR0, setGrR0] = useState(10);       // equatorial start radius (Schwarzschild/Kerr)
   const [grVFrac, setGrVFrac] = useState(1);  // fraction of the circular-orbit angular rate
+  const [grZamoMode, setGrZamoMode] = useState(false); // spawn with L=0 (frame-dragging) instead of vFrac
+  const [grZamoInfo, setGrZamoInfo] = useState<{ omega: number; r: number; theta: number } | null>(null);
   const [grX0x, setGrX0x] = useState(8);      // Minkowski: initial Cartesian position
   const [grX0y, setGrX0y] = useState(0);
   const [grX0z, setGrX0z] = useState(0);
@@ -303,11 +316,11 @@ export function Dynamics3DView() {
   // and a cache recomputed only when the key changes, never per animation frame.
   const grModelRef = useRef<MetricModel>(grModel); grModelRef.current = grModel;
   const grCtl = useRef<GRControls>({
-    metricId: grMetricId, M: grM, a: grA, r0: grR0, vFrac: grVFrac,
+    metricId: grMetricId, M: grM, a: grA, r0: grR0, vFrac: grVFrac, zamoMode: grZamoMode,
     x0: grX0x, y0: grX0y, z0: grX0z, vx: grV0x, vy: grV0y, vz: grV0z, tau1: grTau1, h: grH,
   });
   grCtl.current = {
-    metricId: grMetricId, M: grM, a: grA, r0: grR0, vFrac: grVFrac,
+    metricId: grMetricId, M: grM, a: grA, r0: grR0, vFrac: grVFrac, zamoMode: grZamoMode,
     x0: grX0x, y0: grX0y, z0: grX0z, vx: grV0x, vy: grV0y, vz: grV0z, tau1: grTau1, h: grH,
   };
   const grCache = useRef<GRTrace>({ key: "", points: [], termination: "completed", error: null });
@@ -427,12 +440,19 @@ export function Dynamics3DView() {
     const id = `grm-${++addCounter}`;
     grMarkersRef.current = [...grMarkersRef.current, { id, x0, variant, type: p.type, radius: p.radius ?? 0.3 }];
     grMarkerCacheRef.current.set(id, { key: grMarkerKey(ctl), ...trace });
+    // Cheap, purely informative readout of the frame-dragging rate at the spawn
+    // point — no geodesic integration needed, reuses zamoAngularVelocity directly.
+    if (ctl.zamoMode) {
+      const omegaRes = zamoAngularVelocity(model, x0);
+      setGrZamoInfo(hasValue(omegaRes) ? { omega: omegaRes.value, r: x0[1], theta: x0[2] } : null);
+    }
     forceUI((n) => n + 1);
   };
   const clearGRMarkers = () => {
     grMarkersRef.current = [];
     grMarkerCacheRef.current.clear();
     setGrMarkerError(null);
+    setGrZamoInfo(null);
     forceUI((n) => n + 1);
   };
 
@@ -784,7 +804,7 @@ export function Dynamics3DView() {
     if (grMode) {
       const model = grModelRef.current;
       const ctl = grCtl.current;
-      const key = `${ctl.metricId}|${ctl.M}|${ctl.a}|${ctl.r0}|${ctl.vFrac}|${ctl.x0}|${ctl.y0}|${ctl.z0}|${ctl.vx}|${ctl.vy}|${ctl.vz}|${ctl.tau1}|${ctl.h}`;
+      const key = `${ctl.metricId}|${ctl.M}|${ctl.a}|${ctl.r0}|${ctl.vFrac}|${ctl.zamoMode}|${ctl.x0}|${ctl.y0}|${ctl.z0}|${ctl.vx}|${ctl.vy}|${ctl.vz}|${ctl.tau1}|${ctl.h}`;
       if (grCache.current.key !== key) {
         grCache.current = { key, ...computeGRTrace(model, ctl) };
       }
@@ -1130,6 +1150,17 @@ export function Dynamics3DView() {
                   "v frac" scales a circular-orbit angular-velocity estimate (≈1 = prograde circular); u<sup>r</sup>=0, θ=π/2 fixed. u<sup>t</sup> is solved from the timelike norm condition. r0 inside the horizon shows as a terminated geodesic below.
                 </p>
               </>
+            )}
+
+            <label className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-400">
+              <input type="checkbox" checked={grZamoMode} onChange={(e) => { setGrZamoMode(e.target.checked); if (!e.target.checked) setGrZamoInfo(null); }} />
+              Zero angular momentum (frame-drag)
+            </label>
+            <p className="mt-0.5 text-[10px] leading-tight text-slate-500">
+              When checked, spawned test particles use L=0 (u<sup>φ</sup>=ω(x)·u<sup>t</sup>) instead of the "v frac" velocity above — L stays 0 for the whole geodesic (axisymmetric conservation), yet dφ/dτ is generally nonzero: frame dragging. ω=0 for Minkowski/Schwarzschild (no spin, no dragging) is the correct physical answer, not a bug.
+            </p>
+            {grZamoMode && grZamoInfo && (
+              <p className="mt-0.5 text-[10px] text-cyan-300">ω (frame-drag rate) at last spawn (r={grZamoInfo.r.toFixed(2)}, θ={grZamoInfo.theta.toFixed(2)}): {grZamoInfo.omega.toExponential(3)}</p>
             )}
 
             <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Integration (affine parameter τ)</h3>
