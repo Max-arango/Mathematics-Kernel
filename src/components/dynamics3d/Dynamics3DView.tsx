@@ -17,7 +17,10 @@ import { makeScenario, SCENARIO_IDS, type ScenarioId } from "../../mathlab/dynam
 import { fieldAt, accelerationSources } from "../../mathlab/dynamics3d/field.ts";
 import { potentialAt, effectiveMass } from "../../mathlab/dynamics3d/potential.ts";
 import { sampleFieldGridZ, potentialSurfaceZ, traceFieldLine, type SurfaceVertex, type FieldSample } from "../../mathlab/dynamics3d/fieldViz.ts";
-import { sampleMathFieldGrid3D, traceMathTrajectory3D, type MathFieldGridSample } from "../../mathlab/dynamics3d/mathField.ts";
+import {
+  sampleMathFieldGrid3D, sampleDivergenceGrid3D, sampleCurlGrid3D, traceMathTrajectory3D,
+  type MathFieldGridSample, type MathFieldDivergenceSample, type MathFieldCurlSample, type GridSlice,
+} from "../../mathlab/dynamics3d/mathField.ts";
 import { makeSystem, type DynamicalSystem } from "../../mathlab/dynamics/system.ts";
 import type { Body3D, BodyType, Vec3 } from "../../mathlab/dynamics3d/types.ts";
 import type { Integrator } from "../../mathlab/dynamics3d/integrators.ts";
@@ -89,6 +92,12 @@ interface GRTrace {
 // never fed into the trajectory/geodesic math for these modes).
 // Trajectories are cached separately (per-marker), never stored inline here.
 interface MFMarker { id: string; seed: Vec3; variant: PlanetVariant; type: BodyType; radius: number; }
+// Mathematical Field grid viz extras (optional, per spec — not every visualization is
+// mandatory). "vector" + "full" reproduce the pre-existing render path exactly.
+type MFView = "vector" | "divergence" | "curl";
+type MFSliceMode = "full" | "xy" | "xz" | "yz";
+/** Which axis a slice mode pins (the plane is named by its two FREE axes). */
+const MF_SLICE_AXIS: Record<Exclude<MFSliceMode, "full">, "x" | "y" | "z"> = { xy: "z", xz: "y", yz: "x" };
 interface GRMarker { id: string; x0: number[]; variant: PlanetVariant; type: BodyType; radius: number; }
 interface GRMarkerTrace { key: string; points: Vec3[]; termination: GeodesicTermination | "domainError"; error: string | null; }
 
@@ -242,6 +251,11 @@ export function Dynamics3DView() {
   const [mfRes, setMfRes] = useState(5);           // grid points per axis (res³ arrows)
   const [mfArrowScale, setMfArrowScale] = useState(1);
   const [mfProbeCount, setMfProbeCount] = useState(6);
+  // Optional viz extras (spec: optional, off-by-default view stays "vector"/"full" so
+  // the pre-existing render path is unchanged unless the user picks a different view).
+  const [mfView, setMfView] = useState<MFView>("vector");
+  const [mfSliceMode, setMfSliceMode] = useState<MFSliceMode>("full");
+  const [mfSliceOffset, setMfSliceOffset] = useState(0);
 
   // Parse the field (same try/catch-into-error-state pattern as the 2D DynamicsView).
   const mathSys = useMemo<DynamicalSystem | null>(() => {
@@ -299,13 +313,25 @@ export function Dynamics3DView() {
   fieldCtl.current = { density: fieldDensity, deformScale, vectorScale, deformRes, extent: fieldExtent };
   const modelModeRef = useRef(modelMode); modelModeRef.current = modelMode;
   const mathSysRef = useRef(mathSys); mathSysRef.current = mathSys;
-  const mfCtl = useRef({ extent: mfExtent, res: mfRes, arrowScale: mfArrowScale, probeCount: mfProbeCount });
-  mfCtl.current = { extent: mfExtent, res: mfRes, arrowScale: mfArrowScale, probeCount: mfProbeCount };
+  const mfCtl = useRef({
+    extent: mfExtent, res: mfRes, arrowScale: mfArrowScale, probeCount: mfProbeCount,
+    view: mfView, sliceMode: mfSliceMode, sliceOffset: mfSliceOffset,
+  });
+  mfCtl.current = {
+    extent: mfExtent, res: mfRes, arrowScale: mfArrowScale, probeCount: mfProbeCount,
+    view: mfView, sliceMode: mfSliceMode, sliceOffset: mfSliceOffset,
+  };
   // Sampled arrows + probe streamlines — recomputed only when the field source or
   // sampling controls change (keyed on the sys reference + a param string), never
   // per animation frame (§ physics/sampling stays out of the rAF hot path).
-  const mfCache = useRef<{ sys: DynamicalSystem | null; key: string; grid: MathFieldGridSample | null; probes: Vec3[][] }>({
-    sys: null, key: "", grid: null, probes: [],
+  const mfCache = useRef<{
+    sys: DynamicalSystem | null; key: string;
+    grid: MathFieldGridSample | null;
+    divGrid: MathFieldDivergenceSample | null;
+    curlGrid: MathFieldCurlSample | null;
+    probes: Vec3[][];
+  }>({
+    sys: null, key: "", grid: null, divGrid: null, curlGrid: null, probes: [],
   });
   // User-spawned probe markers (additive to the auto-seeded circle probes above).
   // Trajectories are cached per-marker (keyed on the sys reference + seed), never
@@ -693,10 +719,21 @@ export function Dynamics3DView() {
       const sys = mathSysRef.current;
       const ctl = mfCtl.current;
       const gc = mfCache.current;
-      const key = `${ctl.extent}|${ctl.res}|${ctl.probeCount}`;
+      // Slice mode "full" (default) omits the slice arg entirely — same call as
+      // before the slice feature existed, so sampleMathFieldGrid3D's output for
+      // the default view is unchanged.
+      const slice: GridSlice | undefined = ctl.sliceMode === "full"
+        ? undefined
+        : { axis: MF_SLICE_AXIS[ctl.sliceMode], value: ctl.sliceOffset };
+      // Key includes view + slice so switching between them never shows a stale
+      // sample computed for a different mode.
+      const key = `${ctl.extent}|${ctl.res}|${ctl.probeCount}|${ctl.view}|${ctl.sliceMode}|${ctl.sliceOffset}`;
       if (sys && (gc.sys !== sys || gc.key !== key)) {
         const b = ctl.extent;
-        gc.grid = sampleMathFieldGrid3D(sys, { min: [-b, -b, -b], max: [b, b, b] }, ctl.res);
+        const bounds = { min: [-b, -b, -b] as Vec3, max: [b, b, b] as Vec3 };
+        gc.grid = ctl.view === "vector" ? sampleMathFieldGrid3D(sys, bounds, ctl.res, slice) : null;
+        gc.divGrid = ctl.view === "divergence" ? sampleDivergenceGrid3D(sys, bounds, ctl.res, slice) : null;
+        gc.curlGrid = ctl.view === "curl" ? sampleCurlGrid3D(sys, bounds, ctl.res, slice) : null;
         const probes: Vec3[][] = [];
         for (let i = 0; i < ctl.probeCount; i++) {
           const ang = (2 * Math.PI * i) / Math.max(1, ctl.probeCount);
@@ -710,10 +747,10 @@ export function Dynamics3DView() {
         gc.probes = probes;
         gc.sys = sys; gc.key = key;
       } else if (!sys) {
-        gc.sys = null; gc.grid = null; gc.probes = [];
+        gc.sys = null; gc.grid = null; gc.divGrid = null; gc.curlGrid = null; gc.probes = [];
       }
 
-      if (gc.grid) {
+      if (ctl.view === "vector" && gc.grid) {
         let ref = 1e-6;
         for (const v of gc.grid.vectors) { const m = Math.hypot(v[0], v[1], v[2]); if (Number.isFinite(m)) ref = Math.max(ref, m); }
         for (let i = 0; i < gc.grid.points.length; i++) {
@@ -729,6 +766,47 @@ export function Dynamics3DView() {
           ctx.strokeStyle = `rgba(232,121,249,${inten})`; ctx.lineWidth = 1;
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(z.x, z.y); ctx.stroke();
           ctx.fillStyle = `rgba(232,121,249,${inten})`; ctx.beginPath(); ctx.arc(z.x, z.y, 1.3, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+
+      // Divergence view — a colored dot per sample point (red=source/positive,
+      // blue=sink/negative), brightness/size by |divergence|. Reuses the same
+      // arrow-tip dot primitive above, just without the connecting stroke.
+      if (ctl.view === "divergence" && gc.divGrid) {
+        let ref = 1e-6;
+        for (const v of gc.divGrid.values) if (Number.isFinite(v)) ref = Math.max(ref, Math.abs(v));
+        for (let i = 0; i < gc.divGrid.points.length; i++) {
+          const p = gc.divGrid.points[i], v = gc.divGrid.values[i];
+          if (!Number.isFinite(v)) continue;
+          const s = P(p);
+          if (!s) continue;
+          const mag = Math.min(1, Math.abs(v) / ref);
+          const inten = 0.3 + 0.6 * mag;
+          const color = v >= 0 ? `rgba(248,113,113,${inten})` : `rgba(96,165,250,${inten})`;
+          ctx.fillStyle = color;
+          ctx.beginPath(); ctx.arc(s.x, s.y, 1.3 + 2 * mag, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+
+      // Curl view — the curl vector at each sample point drawn with the same
+      // arrow primitive as the vector-field view, in a visually distinct color
+      // so it isn't confused with the raw field.
+      if (ctl.view === "curl" && gc.curlGrid) {
+        let ref = 1e-6;
+        for (const v of gc.curlGrid.vectors) { const m = Math.hypot(v[0], v[1], v[2]); if (Number.isFinite(m)) ref = Math.max(ref, m); }
+        for (let i = 0; i < gc.curlGrid.points.length; i++) {
+          const p = gc.curlGrid.points[i], v = gc.curlGrid.vectors[i];
+          const mag = Math.hypot(v[0], v[1], v[2]);
+          if (!(mag > 0) || !Number.isFinite(mag)) continue;
+          const len = ctl.arrowScale * (0.5 + 0.5 * Math.min(1, mag / ref));
+          const u = 1 / mag;
+          const tip: Vec3 = [p[0] + v[0] * u * len, p[1] + v[1] * u * len, p[2] + v[2] * u * len];
+          const a = P(p), z = P(tip);
+          if (!a || !z) continue;
+          const inten = 0.3 + 0.6 * Math.min(1, mag / ref);
+          ctx.strokeStyle = `rgba(250,204,21,${inten})`; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(z.x, z.y); ctx.stroke();
+          ctx.fillStyle = `rgba(250,204,21,${inten})`; ctx.beginPath(); ctx.arc(z.x, z.y, 1.3, 0, Math.PI * 2); ctx.fill();
         }
       }
       ctx.strokeStyle = "rgba(52,211,153,0.6)"; ctx.lineWidth = 1.2;
@@ -1095,6 +1173,24 @@ export function Dynamics3DView() {
             <Range label="arrows" value={mfArrowScale} min={0.2} max={4} step={0.2} onChange={setMfArrowScale} fmt={(v) => v.toFixed(1)} />
             <Range label="probes" value={mfProbeCount} min={0} max={24} step={1} onChange={setMfProbeCount} fmt={(v) => String(v)} />
             <p className="mt-1 text-[10px] leading-tight text-slate-500">Arbitrary user-defined R³→R³ field — independent of the gravity model above; sampled on a grid, probes integrated with RK4.</p>
+
+            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-slate-500">View</h3>
+            <div className="flex flex-wrap gap-1">
+              <button onClick={() => setMfView("vector")} className={`${chip(mfView === "vector")} flex-1`}>Vector field</button>
+              <button onClick={() => setMfView("divergence")} className={`${chip(mfView === "divergence")} flex-1`}>Divergence</button>
+              <button onClick={() => setMfView("curl")} className={`${chip(mfView === "curl")} flex-1`}>Curl</button>
+            </div>
+
+            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Slice</h3>
+            <div className="flex flex-wrap gap-1">
+              <button onClick={() => setMfSliceMode("full")} className={`${chip(mfSliceMode === "full")} flex-1`}>Full 3D</button>
+              <button onClick={() => setMfSliceMode("xy")} className={`${chip(mfSliceMode === "xy")} flex-1`}>XY</button>
+              <button onClick={() => setMfSliceMode("xz")} className={`${chip(mfSliceMode === "xz")} flex-1`}>XZ</button>
+              <button onClick={() => setMfSliceMode("yz")} className={`${chip(mfSliceMode === "yz")} flex-1`}>YZ</button>
+            </div>
+            {mfSliceMode !== "full" && (
+              <Range label={`${MF_SLICE_AXIS[mfSliceMode]} =`} value={mfSliceOffset} min={-mfExtent} max={mfExtent} step={0.5} onChange={setMfSliceOffset} fmt={(v) => v.toFixed(1)} />
+            )}
 
             <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Spawn probe — click to place</h3>
             <div className="flex flex-wrap items-center gap-1">
