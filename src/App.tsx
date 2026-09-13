@@ -12,6 +12,7 @@ import { useStore, type AppMode } from "./store.ts";
 import { useNotebook } from "./experiment/notebookStore.ts";
 import { searchMath, type SearchEntry } from "./search/mathSearch.ts";
 import { LogoMark } from "./components/Logo.tsx";
+import { HomeView } from "./components/HomeView.tsx";
 
 // KaTeX-heavy views are lazy-loaded to keep the initial bundle lean.
 const DocsView = lazy(() => import("./components/docs/DocsView.tsx").then((m) => ({ default: m.DocsView })));
@@ -105,12 +106,16 @@ function ModeNav() {
   ];
   return (
     <div className="graph-paper flex items-center gap-1 overflow-x-auto border-b border-line bg-void px-3 py-2 scroll-thin">
-      <span className="mr-3 flex shrink-0 items-center gap-2 text-ink">
+      <button
+        onClick={() => setAppMode("home")}
+        title="Back to workspaces"
+        className="focusable mr-3 flex shrink-0 items-center gap-2 rounded-sm text-ink transition-opacity hover:opacity-80"
+      >
         <LogoMark className="size-6 shrink-0" />
         <span className="font-display text-[19px] leading-none tracking-tight">
           Mathematics <em className="text-vermilion-400">Simulator</em>
         </span>
-      </span>
+      </button>
       {tabs.map((t) => (
         <button
           key={t.id}
@@ -137,6 +142,8 @@ export function App() {
     (s: Stats) => setStats((prev) => (s.ms < 0 ? { ...prev, fps: s.fps, width: s.width, height: s.height } : s)),
     [],
   );
+
+  if (appMode === "home") return <HomeView />;
 
   return (
     <div className="flex h-full flex-col">

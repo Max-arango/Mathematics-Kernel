@@ -18,7 +18,7 @@ export interface AnimState {
   dir: 1 | -1;
 }
 
-export type AppMode = "calculator" | "fractal" | "bloch" | "fourd" | "topo" | "dynamics" | "dynamics3d" | "inspector" | "notebook" | "docs";
+export type AppMode = "home" | "calculator" | "fractal" | "bloch" | "fourd" | "topo" | "dynamics" | "dynamics3d" | "inspector" | "notebook" | "docs";
 
 interface State {
   appMode: AppMode;
@@ -66,7 +66,7 @@ export interface ExportConfig {
 }
 
 export const useStore = create<State>((set) => ({
-  appMode: "calculator",
+  appMode: "home",
   setAppMode: (m) => set({ appMode: m }),
   activeId: "mandelbrot",
   params: defaultParams(FRACTAL_BY_ID.mandelbrot),
