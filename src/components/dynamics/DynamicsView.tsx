@@ -341,12 +341,12 @@ export function DynamicsView() {
     ctx.font = "10px ui-monospace, monospace"; ctx.fillStyle = "#4a5a7a"; ctx.lineWidth = 1;
     for (let gx = Math.ceil(bounds.xMin / step) * step; gx <= bounds.xMax; gx += step) {
       const [sx] = worldToScreen(gx, 0, w, h, v);
-      ctx.strokeStyle = Math.abs(gx) < step / 2 ? "#41506e" : "#141b28";
+      ctx.strokeStyle = Math.abs(gx) < step / 2 ? "#41506e" : "#26251f";
       ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, h); ctx.stroke();
     }
     for (let gy = Math.ceil(bounds.yMin / step) * step; gy <= bounds.yMax; gy += step) {
       const [, sy] = worldToScreen(0, gy, w, h, v);
-      ctx.strokeStyle = Math.abs(gy) < step / 2 ? "#41506e" : "#141b28";
+      ctx.strokeStyle = Math.abs(gy) < step / 2 ? "#41506e" : "#26251f";
       ctx.beginPath(); ctx.moveTo(0, sy); ctx.lineTo(w, sy); ctx.stroke();
     }
     // Axis labels at the origin (or near it if it's offscreen).
@@ -751,27 +751,27 @@ export function DynamicsView() {
   const lastTerminated = [...trajectories.current].reverse().find((t) => t.status !== "running" && t.status !== "paused");
 
   // ── render ────────────────────────────────────────────────────────────────
-  const inputCls = "flex-1 rounded bg-slate-800/80 px-2 py-1 font-mono text-sm text-cyan-100 outline-none focus:ring-1 focus:ring-cyan-400";
+  const inputCls = "flex-1 rounded bg-stone-800/80 px-2 py-1 font-mono text-sm text-vermilion-100 outline-none focus:ring-1 focus:ring-vermilion-400";
   const btn = "rounded px-2 py-1 text-xs";
   const selectedEqInfo: { point: number[]; stab: StabilityResult } | null =
     selectedEq !== null && equilibria[selectedEq] ? equilibria[selectedEq] : null;
 
   return (
     <div className="flex min-h-0 flex-1">
-      <aside className="flex w-80 shrink-0 flex-col gap-3 overflow-y-auto border-r border-white/5 bg-[#080b14] p-3">
+      <aside className="flex w-80 shrink-0 flex-col gap-3 overflow-y-auto border-r border-white/5 bg-[#1c1b18] p-3">
         <div>
-          <h2 className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-cyan-300/70">System ẋ = f(x,y)</h2>
-          <div className="mb-1 flex items-center gap-1"><span className="w-8 font-mono text-xs text-slate-400">ẋ =</span><input className={inputCls} value={fx} spellCheck={false} onChange={(e) => setFx(e.target.value)} /></div>
-          <div className="flex items-center gap-1"><span className="w-8 font-mono text-xs text-slate-400">ẏ =</span><input className={inputCls} value={fy} spellCheck={false} onChange={(e) => setFy(e.target.value)} /></div>
+          <h2 className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">System ẋ = f(x,y)</h2>
+          <div className="mb-1 flex items-center gap-1"><span className="w-8 font-mono text-xs text-stone-400">ẋ =</span><input className={inputCls} value={fx} spellCheck={false} onChange={(e) => setFx(e.target.value)} /></div>
+          <div className="flex items-center gap-1"><span className="w-8 font-mono text-xs text-stone-400">ẏ =</span><input className={inputCls} value={fy} spellCheck={false} onChange={(e) => setFy(e.target.value)} /></div>
           {error && <p className="mt-1 text-[11px] text-red-300">{error}</p>}
         </div>
 
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Presets</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Presets</h3>
           <div className="flex flex-wrap gap-1">
             {PRESETS.map((p) => (
               <button key={p.name} onClick={() => { setFx(p.fx); setFy(p.fy); trajectories.current = []; setSelectedEq(null); }}
-                className="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-slate-400 hover:bg-white/10 hover:text-cyan-200">
+                className="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-stone-400 hover:bg-white/10 hover:text-vermilion-200">
                 {p.name}
               </button>
             ))}
@@ -780,37 +780,37 @@ export function DynamicsView() {
 
         <div className="rounded bg-black/30 p-2">
           <div className="mb-1.5 flex items-center gap-2">
-            <button onClick={() => setPlaying((p) => !p)} className={`${btn} flex-1 font-medium ${playing ? "bg-fuchsia-500/20 text-fuchsia-200" : "bg-cyan-500/15 text-cyan-200"}`}>{playing ? "❚❚ Pause" : "▶ Play"}</button>
-            <button onClick={resetSimulation} className={`${btn} bg-white/5 text-slate-300 hover:bg-white/10`} title="Remove all particles">Clear</button>
+            <button onClick={() => setPlaying((p) => !p)} className={`${btn} flex-1 font-medium ${playing ? "bg-fuchsia-500/20 text-fuchsia-200" : "bg-vermilion-500/15 text-vermilion-200"}`}>{playing ? "❚❚ Pause" : "▶ Play"}</button>
+            <button onClick={resetSimulation} className={`${btn} bg-white/5 text-stone-300 hover:bg-white/10`} title="Remove all particles">Clear</button>
           </div>
           <div className="mb-1.5 flex gap-1">
-            <button onClick={resetView} className={`${btn} flex-1 bg-white/5 text-slate-300 hover:bg-white/10`} title="Restore camera">Reset view</button>
-            <button onClick={() => { resetSimulation(); resetView(); }} className={`${btn} flex-1 bg-white/5 text-slate-300 hover:bg-white/10`} title="Clear + restore camera">Reset all</button>
+            <button onClick={resetView} className={`${btn} flex-1 bg-white/5 text-stone-300 hover:bg-white/10`} title="Restore camera">Reset view</button>
+            <button onClick={() => { resetSimulation(); resetView(); }} className={`${btn} flex-1 bg-white/5 text-stone-300 hover:bg-white/10`} title="Clear + restore camera">Reset all</button>
           </div>
-          <label className="flex items-center gap-2 text-[11px] text-slate-400">
+          <label className="flex items-center gap-2 text-[11px] text-stone-400">
             <span className="w-12">speed</span>
             <input type="range" className="flex-1" min={1} max={10} step={1} value={speed} onChange={(e) => setSpeed(Number(e.target.value))} />
             <span className="w-4 text-right font-mono">{speed}</span>
           </label>
-          <label className="flex items-center gap-2 text-[11px] text-slate-400">
+          <label className="flex items-center gap-2 text-[11px] text-stone-400">
             <span className="w-12">trail</span>
             <input type="range" className="flex-1" min={50} max={4000} step={50} value={trailLen} onChange={(e) => setTrailLen(Number(e.target.value))} />
             <span className="w-10 text-right font-mono">{trailLen}</span>
           </label>
-          <p className="mt-1 text-[10px] text-slate-500">
+          <p className="mt-1 text-[10px] text-stone-500">
             {running} running · {ended} ended · {trajectories.current.length} total
           </p>
         </div>
 
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Layers</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Layers</h3>
           {([
             ["field", "Vector field"],
             ["trails", "Trajectories"],
             ["nullclines", "Nullclines (f=0, g=0)"],
             ["equilibria", "Equilibria"],
           ] as [keyof Layers, string][]).map(([key, label]) => (
-            <label key={key} className="flex items-center gap-2 text-[11px] text-slate-300">
+            <label key={key} className="flex items-center gap-2 text-[11px] text-stone-300">
               <input
                 type="checkbox"
                 checked={layers[key]}
@@ -822,27 +822,27 @@ export function DynamicsView() {
         </div>
 
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Mode</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Mode</h3>
           <div className="flex gap-1">
             {([["launch", "Launch"], ["probe", "Probe"], ["compare", "Compare"]] as [Mode, string][]).map(([m, label]) => (
               <button key={m} onClick={() => setMode(m)}
-                className={`${btn} flex-1 ${mode === m ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-slate-400 hover:bg-white/10"}`}>
+                className={`${btn} flex-1 ${mode === m ? "bg-vermilion-500/20 text-vermilion-200" : "bg-white/5 text-stone-400 hover:bg-white/10"}`}>
                 {label}
               </button>
             ))}
           </div>
 
           {/* Integration direction for launched trajectories (§2, §3). */}
-          <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Direction</h3>
+          <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-stone-500">Direction</h3>
           <div className="flex gap-1">
             {([["forward", "Forward"], ["backward", "Backward"]] as [IntegrationDirection, string][]).map(([dir, label]) => (
               <button key={dir} onClick={() => setDirection(dir)} disabled={bidirectional}
-                className={`${btn} flex-1 ${direction === dir && !bidirectional ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-slate-400 hover:bg-white/10"} ${bidirectional ? "opacity-40" : ""}`}>
+                className={`${btn} flex-1 ${direction === dir && !bidirectional ? "bg-vermilion-500/20 text-vermilion-200" : "bg-white/5 text-stone-400 hover:bg-white/10"} ${bidirectional ? "opacity-40" : ""}`}>
                 {label}
               </button>
             ))}
           </div>
-          <label className="mt-1 flex items-center gap-2 text-[11px] text-slate-300">
+          <label className="mt-1 flex items-center gap-2 text-[11px] text-stone-300">
             <input type="checkbox" checked={bidirectional} onChange={(e) => setBidirectional(e.target.checked)} />
             <span>Bidirectional (backward ← IC → forward)</span>
           </label>
@@ -850,12 +850,12 @@ export function DynamicsView() {
 
         {/* ── Analysis overlays (§19: optional layers). ── */}
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Analysis</h3>
-          <label className="flex items-center gap-2 text-[11px] text-slate-300">
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Analysis</h3>
+          <label className="flex items-center gap-2 text-[11px] text-stone-300">
             <input type="checkbox" checked={showManifolds} onChange={(e) => setShowManifolds(e.target.checked)} />
-            <span>Saddle manifolds <span className="text-slate-500">(W<sup>s</sup> green · W<sup>u</sup> red)</span></span>
+            <span>Saddle manifolds <span className="text-stone-500">(W<sup>s</sup> green · W<sup>u</sup> red)</span></span>
           </label>
-          <label className="mt-1 flex items-center gap-2 text-[11px] text-slate-300">
+          <label className="mt-1 flex items-center gap-2 text-[11px] text-stone-300">
             <input
               type="checkbox"
               checked={showBasins}
@@ -866,23 +866,23 @@ export function DynamicsView() {
           {showBasins && (
             <div className="mt-1 space-y-1 rounded bg-black/30 p-1.5">
               <div className="flex items-center gap-1">
-                <span className="w-14 text-[10px] text-slate-500">resolution</span>
+                <span className="w-14 text-[10px] text-stone-500">resolution</span>
                 {(["low", "medium", "high"] as BasinResolution[]).map((rres) => (
                   <button key={rres} onClick={() => { setBasinRes(rres); startBasins(rres); }}
-                    className={`${btn} flex-1 capitalize ${basinRes === rres ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-slate-400 hover:bg-white/10"}`}>
+                    className={`${btn} flex-1 capitalize ${basinRes === rres ? "bg-vermilion-500/20 text-vermilion-200" : "bg-white/5 text-stone-400 hover:bg-white/10"}`}>
                     {rres}
                   </button>
                 ))}
               </div>
               <div className="flex items-center gap-2">
-                <button onClick={() => startBasins()} className={`${btn} flex-1 bg-white/5 text-slate-300 hover:bg-white/10`}>Recompute (this view)</button>
+                <button onClick={() => startBasins()} className={`${btn} flex-1 bg-white/5 text-stone-300 hover:bg-white/10`}>Recompute (this view)</button>
               </div>
               {basinInfo && (
                 <div>
                   <div className="h-1 overflow-hidden rounded bg-white/10">
-                    <div className="h-full bg-cyan-400" style={{ width: `${(100 * basinInfo.done) / Math.max(1, basinInfo.total)}%` }} />
+                    <div className="h-full bg-vermilion-400" style={{ width: `${(100 * basinInfo.done) / Math.max(1, basinInfo.total)}%` }} />
                   </div>
-                  <p className="mt-0.5 text-[10px] text-slate-500">
+                  <p className="mt-0.5 text-[10px] text-stone-500">
                     {basinInfo.done}/{basinInfo.total} cells · numerical approximation
                   </p>
                 </div>
@@ -901,7 +901,7 @@ export function DynamicsView() {
             setSearchRange({ xMin: b.xMin, xMax: b.xMax, yMin: b.yMin, yMax: b.yMax });
           }}
         >
-          <label className="flex items-center gap-2 text-[11px] text-slate-400">
+          <label className="flex items-center gap-2 text-[11px] text-stone-400">
             <span className="w-16">grid (per axis)</span>
             <input
               type="range" className="flex-1" min={3} max={21} step={2}
@@ -910,7 +910,7 @@ export function DynamicsView() {
             />
             <span className="w-6 text-right font-mono">{searchGrid}</span>
           </label>
-          <p className="mt-0.5 text-[10px] text-slate-500">{searchGrid ** 2} Newton seeds</p>
+          <p className="mt-0.5 text-[10px] text-stone-500">{searchGrid ** 2} Newton seeds</p>
         </RangeBox>
 
         <RangeBox
@@ -922,7 +922,7 @@ export function DynamicsView() {
             setDomain({ xMin: b.xMin, xMax: b.xMax, yMin: b.yMin, yMax: b.yMax });
           }}
         >
-          <label className="mt-1 flex items-center gap-2 text-[11px] text-slate-300">
+          <label className="mt-1 flex items-center gap-2 text-[11px] text-stone-300">
             <input
               type="checkbox"
               checked={enforceDomain}
@@ -930,19 +930,19 @@ export function DynamicsView() {
             />
             <span>Clip trajectories to domain</span>
           </label>
-          <p className="text-[10px] text-slate-500">
+          <p className="text-[10px] text-stone-500">
             When off, the violet box is a hint; trajectories may roam until they hit another wall.
           </p>
         </RangeBox>
 
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Equilibria</h3>
-          {equilibria.length === 0 && <span className="text-[11px] text-slate-500">none found</span>}
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Equilibria</h3>
+          {equilibria.length === 0 && <span className="text-[11px] text-stone-500">none found</span>}
           <div className="space-y-0.5">
             {equilibria.map(({ point, stab }, i) => (
               <button key={i} onClick={() => setSelectedEq(i)}
                 className={`flex w-full items-center justify-between rounded px-1.5 py-0.5 text-left font-mono text-[11px] ${selectedEq === i ? "bg-white/10" : "hover:bg-white/5"}`}>
-                <span className="text-slate-300">({point[0].toFixed(2)}, {point[1].toFixed(2)})</span>
+                <span className="text-stone-300">({point[0].toFixed(2)}, {point[1].toFixed(2)})</span>
                 <span className="flex items-center gap-1.5">
                   <span className="inline-block h-2 w-2 rounded-full" style={{ background: STAB_COLOR[stab.type] }} />
                   <span style={{ color: STAB_COLOR[stab.type] }}>{stab.type}</span>
@@ -957,26 +957,26 @@ export function DynamicsView() {
         )}
 
         {(mode === "compare" || compareData) && (
-          <div className="rounded bg-black/30 p-2 text-[11px] text-slate-300">
+          <div className="rounded bg-black/30 p-2 text-[11px] text-stone-300">
             <div className="mb-1 flex items-center justify-between">
-              <span className="font-semibold text-cyan-200">Comparison Δ(t)</span>
+              <span className="font-semibold text-vermilion-200">Comparison Δ(t)</span>
               <button onClick={() => { setComparePts({ p1: null, p2: null }); setCompareData(null); }}
-                className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-slate-400 hover:bg-white/10">clear</button>
+                className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-stone-400 hover:bg-white/10">clear</button>
             </div>
-            <p className="font-mono text-[10px] text-slate-400">
+            <p className="font-mono text-[10px] text-stone-400">
               <span className="text-sky-300">P₁</span> {comparePts.p1 ? `(${comparePts.p1[0].toFixed(2)}, ${comparePts.p1[1].toFixed(2)})` : "— click plane"}<br />
               <span className="text-orange-300">P₂</span> {comparePts.p2 ? `(${comparePts.p2[0].toFixed(2)}, ${comparePts.p2[1].toFixed(2)})` : "— click plane"}
             </p>
             {compareData
               ? <Sparkline data={compareData.separation} />
-              : <p className="mt-1 text-[10px] text-slate-500">Pick two initial conditions on the plane to plot ‖X₁(t) − X₂(t)‖.</p>}
+              : <p className="mt-1 text-[10px] text-stone-500">Pick two initial conditions on the plane to plot ‖X₁(t) − X₂(t)‖.</p>}
           </div>
         )}
 
-        <div className="mt-auto space-y-1 text-[10px] text-slate-500">
-          <p><b className="text-slate-300">Launch</b> → click plane (forward/backward/pair). <b className="text-slate-300">Drag</b> → pan · <b className="text-slate-300">Wheel</b> → zoom.</p>
-          <p><b className="text-slate-300">Probe</b> → inspect F(x,y). <b className="text-slate-300">Compare</b> → click two ICs for Δ(t).</p>
-          <p><b className="text-slate-300">Click</b> near an equilibrium → select it (Jacobian, λ, eigenvectors, manifolds).</p>
+        <div className="mt-auto space-y-1 text-[10px] text-stone-500">
+          <p><b className="text-stone-300">Launch</b> → click plane (forward/backward/pair). <b className="text-stone-300">Drag</b> → pan · <b className="text-stone-300">Wheel</b> → zoom.</p>
+          <p><b className="text-stone-300">Probe</b> → inspect F(x,y). <b className="text-stone-300">Compare</b> → click two ICs for Δ(t).</p>
+          <p><b className="text-stone-300">Click</b> near an equilibrium → select it (Jacobian, λ, eigenvectors, manifolds).</p>
           <p>Trails — <span style={{ color: "#38e0c8" }}>cyan=forward</span> · <span style={{ color: "#fb923c" }}>amber=backward</span>. Ends — pink=eq · slate=escaped · violet=out of domain · amber=timeout · red=fail.</p>
           <p>Analysis — <span style={{ color: MANIFOLD_STABLE }}>Wˢ</span>/<span style={{ color: MANIFOLD_UNSTABLE }}>Wᵘ</span> manifolds · basins tint by attractor (all numerical approximations).</p>
         </div>
@@ -992,7 +992,7 @@ export function DynamicsView() {
           onPointerLeave={onPointerLeave}
           onWheel={onWheel}
         />
-        <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/40 px-2 py-1 font-mono text-[10px] text-slate-400">
+        <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/40 px-2 py-1 font-mono text-[10px] text-stone-400">
           t = {(lastTerminated?.elapsedTime ?? trajectories.current[0]?.elapsedTime ?? 0).toFixed(2)} ·
           {" "}dt = 0.02 · span = {view.span.toFixed(2)}
         </div>
@@ -1011,22 +1011,22 @@ function EquilibriumPanel(
   const round = (v: number) => (Number.isFinite(v) ? Number(v.toPrecision(4)) : v);
   const fmtVec = (v: Vec) => `(${v[0].toFixed(3)}, ${v[1].toFixed(3)})`;
   return (
-    <div className="rounded bg-black/30 p-2 text-[11px] text-slate-300">
+    <div className="rounded bg-black/30 p-2 text-[11px] text-stone-300">
       <div className="mb-1 flex items-center justify-between">
-        <span className="font-semibold text-cyan-200">Equilibrium</span>
+        <span className="font-semibold text-vermilion-200">Equilibrium</span>
         <span style={{ color: STAB_COLOR[stab.type] }}>{stab.type}</span>
       </div>
-      <div className="font-mono text-slate-400">
+      <div className="font-mono text-stone-400">
         ({point[0].toFixed(3)}, {point[1].toFixed(3)})
       </div>
       {J && (
         <div className="mt-1.5 grid grid-cols-2 gap-x-2 gap-y-0.5 font-mono">
-          <span className="text-slate-500">J</span>
+          <span className="text-stone-500">J</span>
           <span className="font-mono">
             [{J[0][0].toFixed(3)}, {J[0][1].toFixed(3)}<br />
             <span className="ml-3">{J[1][0].toFixed(3)}, {J[1][1].toFixed(3)}]</span>]
           </span>
-          <span className="text-slate-500">λ</span>
+          <span className="text-stone-500">λ</span>
           <span className="font-mono">
             {stab.eigenvalues.map((z, i) => (
               <span key={i}>
@@ -1042,8 +1042,8 @@ function EquilibriumPanel(
         <div className="mt-1.5 border-t border-white/5 pt-1.5 font-mono text-[10px]">
           {lin.eigenpairs.map((p, i) => p.vector && (
             <div key={i} className="flex justify-between">
-              <span className="text-slate-500">v ({round(p.value.re)})</span>
-              <span className="text-slate-300">{fmtVec(p.vector)}</span>
+              <span className="text-stone-500">v ({round(p.value.re)})</span>
+              <span className="text-stone-300">{fmtVec(p.vector)}</span>
             </div>
           ))}
           {lin.unstableDirections.map((v, i) => (
@@ -1054,8 +1054,8 @@ function EquilibriumPanel(
           ))}
         </div>
       )}
-      <p className="mt-1.5 text-[11px] leading-snug text-slate-400">{stab.reason}</p>
-      <p className="mt-1 text-[10px] text-slate-600">Linearization F(x) ≈ J(x₀)(x−x₀) · numerical</p>
+      <p className="mt-1.5 text-[11px] leading-snug text-stone-400">{stab.reason}</p>
+      <p className="mt-1 text-[10px] text-stone-600">Linearization F(x) ≈ J(x₀)(x−x₀) · numerical</p>
     </div>
   );
 }
@@ -1067,11 +1067,11 @@ function BasinLegend({ attractors }: { attractors: { kind: string; point?: Vec }
       {attractors.map((a, i) => (
         <span key={i} className="inline-flex items-center gap-1">
           <span className="inline-block h-2 w-2 rounded-sm" style={{ background: BASIN_ATTRACTOR_HUES[i % BASIN_ATTRACTOR_HUES.length] }} />
-          <span className="text-slate-400">{attractorTag(i)}{a.kind === "limit-cycle" ? " (cycle)" : a.point ? ` ${a.point[0].toFixed(1)},${a.point[1].toFixed(1)}` : ""}</span>
+          <span className="text-stone-400">{attractorTag(i)}{a.kind === "limit-cycle" ? " (cycle)" : a.point ? ` ${a.point[0].toFixed(1)},${a.point[1].toFixed(1)}` : ""}</span>
         </span>
       ))}
-      <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-sm" style={{ background: "rgba(217,70,239,0.6)" }} /><span className="text-slate-400">cycle</span></span>
-      <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-sm" style={{ background: "rgba(148,163,184,0.4)" }} /><span className="text-slate-400">escape</span></span>
+      <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-sm" style={{ background: "rgba(217,70,239,0.6)" }} /><span className="text-stone-400">cycle</span></span>
+      <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-sm" style={{ background: "rgba(148,163,184,0.4)" }} /><span className="text-stone-400">escape</span></span>
     </div>
   );
 }
@@ -1092,7 +1092,7 @@ function Sparkline({ data }: { data: SeparationPoint[] }) {
       <svg width={W} height={H} className="w-full rounded bg-black/40" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
         <polyline points={pts} fill="none" stroke="#f472b6" strokeWidth={1.2} />
       </svg>
-      <p className="mt-0.5 flex justify-between font-mono text-[10px] text-slate-500">
+      <p className="mt-0.5 flex justify-between font-mono text-[10px] text-stone-500">
         <span>Δ₀ = {data[0].delta.toExponential(2)}</span>
         <span>Δ_max = {dMax.toExponential(2)}</span>
         <span>t ≤ {tMax.toFixed(1)}</span>
@@ -1111,7 +1111,7 @@ function RangeBox({
   syncFrom: () => void;
   children?: React.ReactNode;
 }) {
-  const numCls = "w-16 rounded bg-slate-800/80 px-1.5 py-0.5 font-mono text-[11px] text-cyan-100 outline-none focus:ring-1 focus:ring-cyan-400";
+  const numCls = "w-16 rounded bg-stone-800/80 px-1.5 py-0.5 font-mono text-[11px] text-vermilion-100 outline-none focus:ring-1 focus:ring-vermilion-400";
   const set = (key: keyof Rect) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = Number(e.target.value);
     if (!Number.isFinite(v)) return;
@@ -1120,14 +1120,14 @@ function RangeBox({
   return (
     <div>
       <div className="mb-1 flex items-center justify-between">
-        <h3 className="text-[10px] uppercase tracking-wide text-slate-500">{label}</h3>
-        <button onClick={syncFrom} className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-slate-400 hover:bg-white/10 hover:text-cyan-200">sync from view</button>
+        <h3 className="text-[10px] uppercase tracking-wide text-stone-500">{label}</h3>
+        <button onClick={syncFrom} className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-stone-400 hover:bg-white/10 hover:text-vermilion-200">sync from view</button>
       </div>
       <div className="grid grid-cols-2 gap-x-1.5 gap-y-1">
-        <span className="text-[10px] text-slate-500">x min</span><input className={numCls} type="number" step="any" value={rect.xMin} onChange={set("xMin")} />
-        <span className="text-[10px] text-slate-500">x max</span><input className={numCls} type="number" step="any" value={rect.xMax} onChange={set("xMax")} />
-        <span className="text-[10px] text-slate-500">y min</span><input className={numCls} type="number" step="any" value={rect.yMin} onChange={set("yMin")} />
-        <span className="text-[10px] text-slate-500">y max</span><input className={numCls} type="number" step="any" value={rect.yMax} onChange={set("yMax")} />
+        <span className="text-[10px] text-stone-500">x min</span><input className={numCls} type="number" step="any" value={rect.xMin} onChange={set("xMin")} />
+        <span className="text-[10px] text-stone-500">x max</span><input className={numCls} type="number" step="any" value={rect.xMax} onChange={set("xMax")} />
+        <span className="text-[10px] text-stone-500">y min</span><input className={numCls} type="number" step="any" value={rect.yMin} onChange={set("yMin")} />
+        <span className="text-[10px] text-stone-500">y max</span><input className={numCls} type="number" step="any" value={rect.yMax} onChange={set("yMax")} />
       </div>
       {children}
     </div>

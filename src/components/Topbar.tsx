@@ -41,22 +41,22 @@ export function Topbar({ stats }: { stats: Stats }) {
     e.target.value = "";
   };
 
-  const btn = "rounded px-2.5 py-1 text-xs text-slate-300 hover:bg-white/10 hover:text-white transition";
+  const btn = "rounded-sm px-2.5 py-1 text-xs text-graphite hover:bg-white/10 hover:text-ink transition";
 
   return (
-    <header className="flex items-center gap-4 border-b border-white/5 bg-[#080b14] px-4 py-2">
-      <span className="text-sm font-bold tracking-widest text-cyan-300">FRACTAL·LAB</span>
-      <div className="flex gap-4 text-[11px] tabular-nums text-slate-500">
-        <span>FPS <b className="text-cyan-300">{stats.fps}</b></span>
-        <span>Render <b className="text-cyan-300">{stats.ms < 0 ? "—" : `${stats.ms}ms`}</b></span>
-        <span>Res <b className="text-cyan-300">{stats.width}×{stats.height}</b></span>
-        <span>Iter <b className="text-cyan-300">{iterations}</b></span>
+    <header className="flex items-center gap-4 border-b border-line bg-void-soft px-4 py-2">
+      <span className="mono-label text-vermilion-300">Fractal Lab</span>
+      <div className="flex gap-4 text-[11px] tabular-nums text-graphite">
+        <span className="mono-label text-graphite/70">FPS <b className="ml-0.5 font-mono text-sm text-vermilion-300">{stats.fps}</b></span>
+        <span className="mono-label text-graphite/70">Render <b className="ml-0.5 font-mono text-sm text-vermilion-300">{stats.ms < 0 ? "—" : `${stats.ms}ms`}</b></span>
+        <span className="mono-label text-graphite/70">Res <b className="ml-0.5 font-mono text-sm text-vermilion-300">{stats.width}×{stats.height}</b></span>
+        <span className="mono-label text-graphite/70">Iter <b className="ml-0.5 font-mono text-sm text-vermilion-300">{iterations}</b></span>
       </div>
       <div className="ml-auto flex items-center gap-1">
         <button className={btn} onClick={resetView}>Reset view</button>
         <button className={btn} onClick={exportJson}>Save config</button>
         <button className={btn} onClick={() => fileRef.current?.click()}>Load config</button>
-        <button className={`${btn} bg-cyan-500/15 text-cyan-200`} onClick={exportPng}>Export PNG</button>
+        <button className={`${btn} bg-vermilion-500/15 text-vermilion-200 hover:bg-vermilion-500/25 hover:text-vermilion-100`} onClick={exportPng}>Export PNG</button>
         <input ref={fileRef} type="file" accept="application/json" hidden onChange={importJson} />
       </div>
     </header>

@@ -12,14 +12,14 @@ export function AnimatePanel() {
   const animToggle = useStore((s) => s.animToggle);
 
   const params = FRACTAL_BY_ID[activeId].params;
-  const num = "w-20 rounded bg-slate-800/80 px-1.5 py-0.5 text-right text-cyan-200 tabular-nums outline-none focus:ring-1 focus:ring-cyan-400";
+  const num = "w-20 rounded bg-stone-800/80 px-1.5 py-0.5 text-right text-vermilion-200 tabular-nums outline-none focus:ring-1 focus:ring-vermilion-400";
 
   return (
     <div className="border-b border-white/5 px-4 py-3">
-      <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-cyan-300/70">Animate</h2>
+      <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">Animate</h2>
 
       <select
-        className="mb-2 w-full rounded bg-slate-800/80 px-2 py-1 text-sm text-slate-200 outline-none focus:ring-1 focus:ring-cyan-400"
+        className="mb-2 w-full rounded bg-stone-800/80 px-2 py-1 text-sm text-stone-200 outline-none focus:ring-1 focus:ring-vermilion-400"
         value={anim.key ?? ""}
         onChange={(e) => (e.target.value ? animBind(e.target.value) : setAnim({ key: null, playing: false }))}
       >
@@ -31,22 +31,22 @@ export function AnimatePanel() {
 
       {anim.key && (
         <>
-          <div className="mb-2 flex items-center justify-between text-xs text-slate-300">
+          <div className="mb-2 flex items-center justify-between text-xs text-stone-300">
             <span>Range</span>
             <div className="flex items-center gap-1">
               <input type="number" className={num} value={anim.from} onChange={(e) => setAnim({ from: Number(e.target.value) })} />
-              <span className="text-slate-500">→</span>
+              <span className="text-stone-500">→</span>
               <input type="number" className={num} value={anim.to} onChange={(e) => setAnim({ to: Number(e.target.value) })} />
             </div>
           </div>
 
-          <label className="mb-1 flex items-center justify-between text-xs text-slate-300">
-            <span>Speed <span className="text-slate-500">{anim.speed.toFixed(2)}/s</span></span>
+          <label className="mb-1 flex items-center justify-between text-xs text-stone-300">
+            <span>Speed <span className="text-stone-500">{anim.speed.toFixed(2)}/s</span></span>
             <input type="range" className="w-32" min={0.02} max={2} step={0.01} value={anim.speed} onChange={(e) => setAnim({ speed: Number(e.target.value) })} />
           </label>
 
-          <label className="mb-2 flex items-center justify-between text-xs text-slate-300">
-            <span>Steps <span className="text-slate-500">{anim.steps === 0 ? "smooth" : anim.steps}</span></span>
+          <label className="mb-2 flex items-center justify-between text-xs text-stone-300">
+            <span>Steps <span className="text-stone-500">{anim.steps === 0 ? "smooth" : anim.steps}</span></span>
             <input type="range" className="w-32" min={0} max={64} step={1} value={anim.steps} onChange={(e) => setAnim({ steps: Number(e.target.value) })} />
           </label>
 
@@ -56,7 +56,7 @@ export function AnimatePanel() {
                 key={m}
                 onClick={() => setAnim({ mode: m })}
                 className={`rounded px-1 py-1 text-[11px] transition ${
-                  anim.mode === m ? "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/40" : "text-slate-400 hover:bg-white/5"
+                  anim.mode === m ? "bg-vermilion-500/15 text-vermilion-200 ring-1 ring-vermilion-400/40" : "text-stone-400 hover:bg-white/5"
                 }`}
               >
                 {MODE_LABEL[m]}
@@ -68,12 +68,12 @@ export function AnimatePanel() {
             <button
               onClick={animToggle}
               className={`flex-1 rounded px-3 py-1.5 text-xs font-medium transition ${
-                anim.playing ? "bg-fuchsia-500/20 text-fuchsia-200 ring-1 ring-fuchsia-400/50" : "bg-cyan-500/15 text-cyan-200"
+                anim.playing ? "bg-fuchsia-500/20 text-fuchsia-200 ring-1 ring-fuchsia-400/50" : "bg-vermilion-500/15 text-vermilion-200"
               }`}
             >
               {anim.playing ? "❚❚ Pause" : "▶ Play"}
             </button>
-            <button onClick={() => setAnim({ phase: 0, dir: 1 })} className="rounded bg-white/5 px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200">
+            <button onClick={() => setAnim({ phase: 0, dir: 1 })} className="rounded bg-white/5 px-3 py-1.5 text-xs text-stone-400 hover:text-stone-200">
               ↺
             </button>
           </div>

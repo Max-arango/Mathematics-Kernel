@@ -31,21 +31,21 @@ export function ExpressionPanel() {
 
   return (
     <div className="border-b border-white/5 px-4 py-3">
-      <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-cyan-300/70">
+      <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">
         {domain ? "f(z) =" : "f(z, c) ="}
       </h2>
       <input
         value={source}
         spellCheck={false}
         onChange={(e) => setExpr(e.target.value)}
-        className={`w-full rounded bg-slate-800/80 px-2 py-1.5 font-mono text-sm text-cyan-100 outline-none focus:ring-1 ${
-          exprError ? "ring-1 ring-red-500/60" : "focus:ring-cyan-400"
+        className={`w-full rounded bg-stone-800/80 px-2 py-1.5 font-mono text-sm text-vermilion-100 outline-none focus:ring-1 ${
+          exprError ? "ring-1 ring-red-500/60" : "focus:ring-vermilion-400"
         }`}
       />
       {exprError ? (
         <p className="mt-1 text-[11px] text-red-300">{exprError}</p>
       ) : (
-        <p className="mt-1 font-mono text-[11px] text-slate-500">
+        <p className="mt-1 font-mono text-[11px] text-stone-500">
           ∂/∂z = <span className="text-emerald-300">{deriv.error ? "—" : deriv.text}</span>
         </p>
       )}
@@ -54,13 +54,13 @@ export function ExpressionPanel() {
           <button
             key={ex}
             onClick={() => setExpr(ex)}
-            className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[11px] text-slate-400 hover:bg-white/10 hover:text-cyan-200"
+            className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[11px] text-stone-400 hover:bg-white/10 hover:text-vermilion-200"
           >
             {ex}
           </button>
         ))}
       </div>
-      <p className="mt-2 text-[10px] text-slate-600">
+      <p className="mt-2 text-[10px] text-stone-600">
         vars: z, c, i, p · fns: sin cos tan exp ln log sqrt conjugate · p = exponent slider
       </p>
     </div>

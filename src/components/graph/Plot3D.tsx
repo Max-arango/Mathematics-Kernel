@@ -308,11 +308,11 @@ export function Plot3D({ scene }: { scene: Scene }) {
 
   const deg = (r: number) => Math.round((r * 180) / Math.PI);
   const clampR = (n: number) => Math.max(-RANGE, Math.min(RANGE, n));
-  const numCls = "w-16 rounded bg-slate-800/80 px-1.5 py-0.5 text-right font-mono text-cyan-100 tabular-nums outline-none focus:ring-1 focus:ring-cyan-400";
-  const btn = "rounded bg-white/5 px-2 py-1 text-[11px] text-slate-300 hover:bg-white/10 hover:text-white";
+  const numCls = "w-16 rounded bg-stone-800/80 px-1.5 py-0.5 text-right font-mono text-vermilion-100 tabular-nums outline-none focus:ring-1 focus:ring-vermilion-400";
+  const btn = "rounded bg-white/5 px-2 py-1 text-[11px] text-stone-300 hover:bg-white/10 hover:text-white";
 
   const toggle = (k: "grid" | "axes" | "box") => setShow((s) => ({ ...s, [k]: !s[k] }));
-  const tglCls = (on: boolean) => `rounded px-2 py-1 text-[11px] ${on ? "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/40" : "bg-white/5 text-slate-500 hover:text-slate-300"}`;
+  const tglCls = (on: boolean) => `rounded px-2 py-1 text-[11px] ${on ? "bg-vermilion-500/15 text-vermilion-200 ring-1 ring-vermilion-400/40" : "bg-white/5 text-stone-500 hover:text-stone-300"}`;
 
   return (
     <>
@@ -336,35 +336,35 @@ export function Plot3D({ scene }: { scene: Scene }) {
           <button className={tglCls(show.grid)} onClick={() => toggle("grid")}>Grid</button>
           <button className={tglCls(show.axes)} onClick={() => toggle("axes")}>Axes</button>
         </div>
-        <label className="flex items-center gap-1 rounded bg-black/60 px-2 py-1 font-mono text-[10px] text-slate-400">
-          z ∈ ±<input type="number" min={1} step={1} className="w-12 rounded bg-slate-800/80 px-1 py-0.5 text-right text-cyan-100 outline-none focus:ring-1 focus:ring-cyan-400" value={zRange} onChange={(e) => setZRange(Number(e.target.value))} />
+        <label className="flex items-center gap-1 rounded bg-black/60 px-2 py-1 font-mono text-[10px] text-stone-400">
+          z ∈ ±<input type="number" min={1} step={1} className="w-12 rounded bg-stone-800/80 px-1 py-0.5 text-right text-vermilion-100 outline-none focus:ring-1 focus:ring-vermilion-400" value={zRange} onChange={(e) => setZRange(Number(e.target.value))} />
         </label>
-        <div className="rounded bg-black/60 px-2 py-1 text-right font-mono text-[10px] tabular-nums text-slate-400">
+        <div className="rounded bg-black/60 px-2 py-1 text-right font-mono text-[10px] tabular-nums text-stone-400">
           yaw {deg(disp.yaw)}° · pitch {deg(disp.pitch)}° · dist {disp.dist.toFixed(1)}
         </div>
       </div>
 
       {/* Probe + value analysis */}
-      <div className="absolute left-2 top-2 rounded bg-black/60 px-3 py-2 font-mono text-[11px] text-slate-300">
+      <div className="absolute left-2 top-2 rounded bg-black/60 px-3 py-2 font-mono text-[11px] text-stone-300">
         <div className="mb-1 flex items-center gap-2">
-          <span className="text-slate-500">probe</span>
+          <span className="text-stone-500">probe</span>
           x <input type="number" step={0.25} className={numCls} value={Number(probe.x.toFixed(3))} onChange={(e) => setProbe((p) => ({ ...p, x: clampR(Number(e.target.value)) }))} />
           y <input type="number" step={0.25} className={numCls} value={Number(probe.y.toFixed(3))} onChange={(e) => setProbe((p) => ({ ...p, y: clampR(Number(e.target.value)) }))} />
         </div>
         {probeInfo ? (
           <div className="space-y-0.5">
-            <div>f(x,y) = <span className="text-cyan-300">{fmt(probeInfo.z)}</span></div>
-            <div>∂f/∂x = <span className="text-emerald-300">{fmt(probeInfo.gx)}</span> <span className="text-slate-600">= {probeInfo.dxExpr}</span></div>
-            <div>∂f/∂y = <span className="text-emerald-300">{fmt(probeInfo.gy)}</span> <span className="text-slate-600">= {probeInfo.dyExpr}</span></div>
+            <div>f(x,y) = <span className="text-vermilion-300">{fmt(probeInfo.z)}</span></div>
+            <div>∂f/∂x = <span className="text-emerald-300">{fmt(probeInfo.gx)}</span> <span className="text-stone-600">= {probeInfo.dxExpr}</span></div>
+            <div>∂f/∂y = <span className="text-emerald-300">{fmt(probeInfo.gy)}</span> <span className="text-stone-600">= {probeInfo.dyExpr}</span></div>
             <div>‖∇f‖ = <span className="text-amber-300">{fmt(Math.hypot(probeInfo.gx, probeInfo.gy))}</span></div>
           </div>
         ) : (
-          <div className="text-slate-500">no surface — add z = f(x,y)</div>
+          <div className="text-stone-500">no surface — add z = f(x,y)</div>
         )}
       </div>
 
       {/* Axis legend */}
-      <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-3 py-1.5 font-mono text-[11px] text-slate-400">
+      <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-3 py-1.5 font-mono text-[11px] text-stone-400">
         <span className="text-[#f26b6b]">■</span> X&nbsp; <span className="text-[#73e58c]">■</span> Y&nbsp; <span className="text-[#809eff]">■</span> Z&nbsp;·&nbsp;z = f(x,y) or F(x,y,z) = 0 · drag rotate · wheel zoom
       </div>
     </>

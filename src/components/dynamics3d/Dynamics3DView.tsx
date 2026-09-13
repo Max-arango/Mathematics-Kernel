@@ -1138,22 +1138,22 @@ export function Dynamics3DView() {
   const setPlayhead = (i: number) => { playheadRef.current = i >= histEnd ? -1 : Math.max(0, i); forceUI((n) => n + 1); };
 
   const btn = "rounded px-2 py-1 text-xs";
-  const chip = (on: boolean) => `${btn} ${on ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-slate-400 hover:bg-white/10"}`;
-  const mfInputCls = "flex-1 rounded bg-slate-800/80 px-2 py-1 font-mono text-sm text-cyan-100 outline-none focus:ring-1 focus:ring-cyan-400";
+  const chip = (on: boolean) => `${btn} ${on ? "bg-vermilion-500/20 text-vermilion-200" : "bg-white/5 text-stone-400 hover:bg-white/10"}`;
+  const mfInputCls = "flex-1 rounded bg-stone-800/80 px-2 py-1 font-mono text-sm text-vermilion-100 outline-none focus:ring-1 focus:ring-vermilion-400";
 
   return (
     <div className="flex min-h-0 flex-1">
       {/* left controls */}
-      <aside className="flex w-72 shrink-0 flex-col gap-3 overflow-y-auto border-r border-white/5 bg-[#080b14] p-3 text-slate-300">
+      <aside className="flex w-72 shrink-0 flex-col gap-3 overflow-y-auto border-r border-white/5 bg-[#1c1b18] p-3 text-stone-300">
         <div>
-          <h2 className="text-[11px] font-semibold uppercase tracking-widest text-cyan-300/70">Space-Time Dynamics 3D</h2>
-          <p className="mt-1 text-[10px] leading-snug text-slate-500">
-            Effective gravitational-field model — a visual space-time approximation, <b className="text-slate-400">not</b> the Einstein metric.
+          <h2 className="text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">Space-Time Dynamics 3D</h2>
+          <p className="mt-1 text-[10px] leading-snug text-stone-500">
+            Effective gravitational-field model — a visual space-time approximation, <b className="text-stone-400">not</b> the Einstein metric.
           </p>
         </div>
 
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Model</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Model</h3>
           <div className="flex flex-wrap gap-1">
             <button onClick={() => setModelMode("gravity")} className={`${chip(modelMode === "gravity")} flex-1`}>Gravity (N-Body)</button>
             <button onClick={() => setModelMode("mathfield")} className={`${chip(modelMode === "mathfield")} flex-1`}>Mathematical Field</button>
@@ -1163,25 +1163,25 @@ export function Dynamics3DView() {
 
         {modelMode === "mathfield" && (
           <div>
-            <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Field (dx/dt, dy/dt, dz/dt)</h3>
-            <div className="mb-1 flex items-center gap-1"><span className="w-8 font-mono text-xs text-slate-400">ẋ =</span><input className={mfInputCls} value={mfx} spellCheck={false} onChange={(e) => setMfx(e.target.value)} /></div>
-            <div className="mb-1 flex items-center gap-1"><span className="w-8 font-mono text-xs text-slate-400">ẏ =</span><input className={mfInputCls} value={mfy} spellCheck={false} onChange={(e) => setMfy(e.target.value)} /></div>
-            <div className="flex items-center gap-1"><span className="w-8 font-mono text-xs text-slate-400">ż =</span><input className={mfInputCls} value={mfz} spellCheck={false} onChange={(e) => setMfz(e.target.value)} /></div>
+            <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Field (dx/dt, dy/dt, dz/dt)</h3>
+            <div className="mb-1 flex items-center gap-1"><span className="w-8 font-mono text-xs text-stone-400">ẋ =</span><input className={mfInputCls} value={mfx} spellCheck={false} onChange={(e) => setMfx(e.target.value)} /></div>
+            <div className="mb-1 flex items-center gap-1"><span className="w-8 font-mono text-xs text-stone-400">ẏ =</span><input className={mfInputCls} value={mfy} spellCheck={false} onChange={(e) => setMfy(e.target.value)} /></div>
+            <div className="flex items-center gap-1"><span className="w-8 font-mono text-xs text-stone-400">ż =</span><input className={mfInputCls} value={mfz} spellCheck={false} onChange={(e) => setMfz(e.target.value)} /></div>
             {mfError && <p className="mt-1 text-[11px] text-red-300">{mfError}</p>}
             <Range label="extent" value={mfExtent} min={2} max={30} step={1} onChange={setMfExtent} fmt={(v) => String(v)} />
             <Range label="grid" value={mfRes} min={2} max={9} step={1} onChange={setMfRes} fmt={(v) => `${v}³`} />
             <Range label="arrows" value={mfArrowScale} min={0.2} max={4} step={0.2} onChange={setMfArrowScale} fmt={(v) => v.toFixed(1)} />
             <Range label="probes" value={mfProbeCount} min={0} max={24} step={1} onChange={setMfProbeCount} fmt={(v) => String(v)} />
-            <p className="mt-1 text-[10px] leading-tight text-slate-500">Arbitrary user-defined R³→R³ field — independent of the gravity model above; sampled on a grid, probes integrated with RK4.</p>
+            <p className="mt-1 text-[10px] leading-tight text-stone-500">Arbitrary user-defined R³→R³ field — independent of the gravity model above; sampled on a grid, probes integrated with RK4.</p>
 
-            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-slate-500">View</h3>
+            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-stone-500">View</h3>
             <div className="flex flex-wrap gap-1">
               <button onClick={() => setMfView("vector")} className={`${chip(mfView === "vector")} flex-1`}>Vector field</button>
               <button onClick={() => setMfView("divergence")} className={`${chip(mfView === "divergence")} flex-1`}>Divergence</button>
               <button onClick={() => setMfView("curl")} className={`${chip(mfView === "curl")} flex-1`}>Curl</button>
             </div>
 
-            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Slice</h3>
+            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-stone-500">Slice</h3>
             <div className="flex flex-wrap gap-1">
               <button onClick={() => setMfSliceMode("full")} className={`${chip(mfSliceMode === "full")} flex-1`}>Full 3D</button>
               <button onClick={() => setMfSliceMode("xy")} className={`${chip(mfSliceMode === "xy")} flex-1`}>XY</button>
@@ -1192,114 +1192,114 @@ export function Dynamics3DView() {
               <Range label={`${MF_SLICE_AXIS[mfSliceMode]} =`} value={mfSliceOffset} min={-mfExtent} max={mfExtent} step={0.5} onChange={setMfSliceOffset} fmt={(v) => v.toFixed(1)} />
             )}
 
-            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Spawn probe — click to place</h3>
+            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-stone-500">Spawn probe — click to place</h3>
             <div className="flex flex-wrap items-center gap-1">
               {Object.keys(BODY_PRESETS).map((k) => (
                 <button key={k} onClick={() => armPlace(k)}
-                  className={`rounded px-1.5 py-0.5 text-[11px] ${placeArm?.preset === k ? "bg-cyan-500/20 text-cyan-200 ring-1 ring-cyan-400/50" : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-cyan-200"}`}>{k}</button>
+                  className={`rounded px-1.5 py-0.5 text-[11px] ${placeArm?.preset === k ? "bg-vermilion-500/20 text-vermilion-200 ring-1 ring-vermilion-400/50" : "bg-white/5 text-stone-400 hover:bg-white/10 hover:text-vermilion-200"}`}>{k}</button>
               ))}
-              <button onClick={clearMathMarkers} className="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-slate-400 hover:bg-white/10" title="Remove all spawned probes">clear ({mfMarkersRef.current.length})</button>
+              <button onClick={clearMathMarkers} className="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-stone-400 hover:bg-white/10" title="Remove all spawned probes">clear ({mfMarkersRef.current.length})</button>
             </div>
             <div className="mt-1 flex items-center gap-1">
-              <span className="w-12 text-[11px] text-slate-500">planet</span>
-              <select value={addVariant} onChange={(e) => setAddVariant(e.target.value as PlanetVariant)} className="flex-1 rounded bg-slate-800/80 px-1.5 py-0.5 text-[11px] capitalize text-cyan-100 outline-none">
+              <span className="w-12 text-[11px] text-stone-500">planet</span>
+              <select value={addVariant} onChange={(e) => setAddVariant(e.target.value as PlanetVariant)} className="flex-1 rounded bg-stone-800/80 px-1.5 py-0.5 text-[11px] capitalize text-vermilion-100 outline-none">
                 {PLANET_VARIANTS.map((v) => <option key={v} value={v}>{v}</option>)}
               </select>
             </div>
             <Range label="spawn z" value={spawnZ} min={-15} max={15} step={1} onChange={setSpawnZ} fmt={(v) => String(v)} />
-            {placeArm && <p className="text-[10px] text-cyan-300">Click in the scene to spawn a probe (on z={spawnZ}) that rides the field's flow, appearing as <b>{placeArm.preset}</b>. Click the button again to cancel.</p>}
+            {placeArm && <p className="text-[10px] text-vermilion-300">Click in the scene to spawn a probe (on z={spawnZ}) that rides the field's flow, appearing as <b>{placeArm.preset}</b>. Click the button again to cancel.</p>}
           </div>
         )}
 
         {modelMode === "gr" && (
           <div>
-            <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Metric</h3>
+            <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Metric</h3>
             <select value={grMetricId} onChange={(e) => setGrMetricId(e.target.value as GRMetricId)}
-              className="w-full rounded bg-slate-800/80 px-2 py-1 text-xs text-cyan-100 outline-none">
+              className="w-full rounded bg-stone-800/80 px-2 py-1 text-xs text-vermilion-100 outline-none">
               <option value="minkowski">Minkowski</option>
               <option value="schwarzschild">Schwarzschild</option>
               <option value="kerr">Kerr</option>
             </select>
-            <p className="mt-1 text-[10px] leading-tight text-slate-500">{grModel.provenance}.</p>
+            <p className="mt-1 text-[10px] leading-tight text-stone-500">{grModel.provenance}.</p>
 
             {grMetricId !== "minkowski" && <Range label="M" value={grM} min={0.1} max={5} step={0.1} onChange={setGrM} fmt={(v) => v.toFixed(1)} />}
             {grMetricId === "kerr" && <Range label="a" value={grA} min={-grM} max={grM} step={0.05} onChange={setGrA} fmt={(v) => v.toFixed(2)} />}
 
             {grMetricId === "minkowski" ? (
               <>
-                <p className="mb-0.5 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Initial position</p>
+                <p className="mb-0.5 mt-2 text-[10px] uppercase tracking-wide text-stone-500">Initial position</p>
                 <Range label="x0" value={grX0x} min={-15} max={15} step={0.5} onChange={setGrX0x} fmt={(v) => v.toFixed(1)} />
                 <Range label="y0" value={grX0y} min={-15} max={15} step={0.5} onChange={setGrX0y} fmt={(v) => v.toFixed(1)} />
                 <Range label="z0" value={grX0z} min={-15} max={15} step={0.5} onChange={setGrX0z} fmt={(v) => v.toFixed(1)} />
-                <p className="mb-0.5 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Initial velocity (units c=1)</p>
+                <p className="mb-0.5 mt-2 text-[10px] uppercase tracking-wide text-stone-500">Initial velocity (units c=1)</p>
                 <Range label="vx" value={grV0x} min={-0.95} max={0.95} step={0.05} onChange={setGrV0x} fmt={(v) => v.toFixed(2)} />
                 <Range label="vy" value={grV0y} min={-0.95} max={0.95} step={0.05} onChange={setGrV0y} fmt={(v) => v.toFixed(2)} />
                 <Range label="vz" value={grV0z} min={-0.95} max={0.95} step={0.05} onChange={setGrV0z} fmt={(v) => v.toFixed(2)} />
-                <p className="mt-1 text-[10px] leading-tight text-slate-500">Flat spacetime — straight-line motion at constant velocity.</p>
+                <p className="mt-1 text-[10px] leading-tight text-stone-500">Flat spacetime — straight-line motion at constant velocity.</p>
               </>
             ) : (
               <>
-                <p className="mb-0.5 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Test-particle orbit (equatorial)</p>
+                <p className="mb-0.5 mt-2 text-[10px] uppercase tracking-wide text-stone-500">Test-particle orbit (equatorial)</p>
                 <Range label="r0" value={grR0} min={1} max={40} step={0.5} onChange={setGrR0} fmt={(v) => v.toFixed(1)} />
                 <Range label="v frac" value={grVFrac} min={-2} max={2} step={0.05} onChange={setGrVFrac} fmt={(v) => v.toFixed(2)} />
-                <p className="mt-1 text-[10px] leading-tight text-slate-500">
+                <p className="mt-1 text-[10px] leading-tight text-stone-500">
                   "v frac" scales a circular-orbit angular-velocity estimate (≈1 = prograde circular); u<sup>r</sup>=0, θ=π/2 fixed. u<sup>t</sup> is solved from the timelike norm condition. r0 inside the horizon shows as a terminated geodesic below.
                 </p>
               </>
             )}
 
-            <label className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-400">
+            <label className="mt-1 flex items-center gap-1.5 text-[11px] text-stone-400">
               <input type="checkbox" checked={grZamoMode} onChange={(e) => { setGrZamoMode(e.target.checked); if (!e.target.checked) setGrZamoInfo(null); }} />
               Zero angular momentum (frame-drag)
             </label>
-            <p className="mt-0.5 text-[10px] leading-tight text-slate-500">
+            <p className="mt-0.5 text-[10px] leading-tight text-stone-500">
               When checked, spawned test particles use L=0 (u<sup>φ</sup>=ω(x)·u<sup>t</sup>) instead of the "v frac" velocity above — L stays 0 for the whole geodesic (axisymmetric conservation), yet dφ/dτ is generally nonzero: frame dragging. ω=0 for Minkowski/Schwarzschild (no spin, no dragging) is the correct physical answer, not a bug.
             </p>
             {grZamoMode && grZamoInfo && (
-              <p className="mt-0.5 text-[10px] text-cyan-300">ω (frame-drag rate) at last spawn (r={grZamoInfo.r.toFixed(2)}, θ={grZamoInfo.theta.toFixed(2)}): {grZamoInfo.omega.toExponential(3)}</p>
+              <p className="mt-0.5 text-[10px] text-vermilion-300">ω (frame-drag rate) at last spawn (r={grZamoInfo.r.toFixed(2)}, θ={grZamoInfo.theta.toFixed(2)}): {grZamoInfo.omega.toExponential(3)}</p>
             )}
 
-            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Integration (affine parameter τ)</h3>
+            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-stone-500">Integration (affine parameter τ)</h3>
             <Range label="tau1" value={grTau1} min={1} max={300} step={1} onChange={setGrTau1} fmt={(v) => String(v)} />
             <Range label="h" value={grH} min={0.001} max={0.2} step={0.001} onChange={setGrH} fmt={(v) => v.toFixed(3)} />
-            <p className="mt-1 text-[10px] leading-tight text-slate-500">Coordinate-position plot of the integrated geodesic (spherical→Cartesian for Schwarzschild/Kerr) — not a literal spacetime embedding.</p>
+            <p className="mt-1 text-[10px] leading-tight text-stone-500">Coordinate-position plot of the integrated geodesic (spherical→Cartesian for Schwarzschild/Kerr) — not a literal spacetime embedding.</p>
 
-            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-slate-500">Spawn test particle — click to place</h3>
+            <h3 className="mb-1 mt-2 text-[10px] uppercase tracking-wide text-stone-500">Spawn test particle — click to place</h3>
             <div className="flex flex-wrap items-center gap-1">
               {Object.keys(BODY_PRESETS).map((k) => (
                 <button key={k} onClick={() => armPlace(k)}
-                  className={`rounded px-1.5 py-0.5 text-[11px] ${placeArm?.preset === k ? "bg-cyan-500/20 text-cyan-200 ring-1 ring-cyan-400/50" : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-cyan-200"}`}>{k}</button>
+                  className={`rounded px-1.5 py-0.5 text-[11px] ${placeArm?.preset === k ? "bg-vermilion-500/20 text-vermilion-200 ring-1 ring-vermilion-400/50" : "bg-white/5 text-stone-400 hover:bg-white/10 hover:text-vermilion-200"}`}>{k}</button>
               ))}
-              <button onClick={clearGRMarkers} className="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-slate-400 hover:bg-white/10" title="Remove all spawned geodesics">clear ({grMarkersRef.current.length})</button>
+              <button onClick={clearGRMarkers} className="rounded bg-white/5 px-1.5 py-0.5 text-[11px] text-stone-400 hover:bg-white/10" title="Remove all spawned geodesics">clear ({grMarkersRef.current.length})</button>
             </div>
             <div className="mt-1 flex items-center gap-1">
-              <span className="w-12 text-[11px] text-slate-500">planet</span>
-              <select value={addVariant} onChange={(e) => setAddVariant(e.target.value as PlanetVariant)} className="flex-1 rounded bg-slate-800/80 px-1.5 py-0.5 text-[11px] capitalize text-cyan-100 outline-none">
+              <span className="w-12 text-[11px] text-stone-500">planet</span>
+              <select value={addVariant} onChange={(e) => setAddVariant(e.target.value as PlanetVariant)} className="flex-1 rounded bg-stone-800/80 px-1.5 py-0.5 text-[11px] capitalize text-vermilion-100 outline-none">
                 {PLANET_VARIANTS.map((v) => <option key={v} value={v}>{v}</option>)}
               </select>
             </div>
             <Range label="spawn z" value={spawnZ} min={-15} max={15} step={1} onChange={setSpawnZ} fmt={(v) => String(v)} />
-            {placeArm && <p className="text-[10px] text-cyan-300">Click in the scene to launch a test-particle geodesic (on z={spawnZ}), using the M/a/velocity settings above, appearing as <b>{placeArm.preset}</b>. Click the button again to cancel.</p>}
+            {placeArm && <p className="text-[10px] text-vermilion-300">Click in the scene to launch a test-particle geodesic (on z={spawnZ}), using the M/a/velocity settings above, appearing as <b>{placeArm.preset}</b>. Click the button again to cancel.</p>}
             {grMarkerError && <p className="mt-1 text-[11px] text-red-300">{grMarkerError}</p>}
           </div>
         )}
 
         {modelMode === "gravity" && (<>
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Scenario</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Scenario</h3>
           <select value={scenarioId} onChange={(e) => loadScenario(e.target.value as ScenarioId)}
-            className="w-full rounded bg-slate-800/80 px-2 py-1 text-xs text-cyan-100 outline-none">
+            className="w-full rounded bg-stone-800/80 px-2 py-1 text-xs text-vermilion-100 outline-none">
             {SCENARIO_IDS.map((id) => <option key={id} value={id}>{makeScenario(id).name}</option>)}
           </select>
         </div>
 
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Gravity model</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Gravity model</h3>
           <div className="flex gap-1">
             <button onClick={() => setGravityModel("softened")} className={`${chip(gravityModel === "softened")} flex-1`}>Softened</button>
             <button onClick={() => setGravityModel("exact")} className={`${chip(gravityModel === "exact")} flex-1`}>Exact</button>
           </div>
-          <p className="mt-1 text-[10px] leading-tight text-slate-500">
+          <p className="mt-1 text-[10px] leading-tight text-stone-500">
             {gravityModel === "exact"
               ? "Unsoftened 1/r² Newton's law — ε (softening) is ignored; clamped near r=0 instead of blowing up."
               : "Plummer-softened 1/r² — finite everywhere, uses per-body/global ε (softening)."}
@@ -1308,15 +1308,15 @@ export function Dynamics3DView() {
 
         {/* ── Body rendering (visual only — switching never touches physics, §4/§51). ── */}
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Body rendering</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Body rendering</h3>
           <div className="flex gap-1">
             {(["minimal", "celestial"] as BodyRenderMode[]).map((m) => (
               <button key={m} onClick={() => setRenderMode(m)} className={`${chip(renderModeUI === m)} flex-1 capitalize`}>{m}</button>
             ))}
           </div>
           <div className="mt-1 flex items-center gap-1">
-            <span className="w-12 text-[11px] text-slate-500">quality</span>
-            <select value={quality} onChange={(e) => setQuality(e.target.value as CelestialQuality)} className="flex-1 rounded bg-slate-800/80 px-1.5 py-0.5 text-[11px] text-cyan-100 outline-none">
+            <span className="w-12 text-[11px] text-stone-500">quality</span>
+            <select value={quality} onChange={(e) => setQuality(e.target.value as CelestialQuality)} className="flex-1 rounded bg-stone-800/80 px-1.5 py-0.5 text-[11px] text-vermilion-100 outline-none">
               {(["auto", "low", "medium", "high"] as CelestialQuality[]).map((q) => <option key={q} value={q}>{q}</option>)}
             </select>
           </div>
@@ -1330,14 +1330,14 @@ export function Dynamics3DView() {
               ))}
             </div>
           )}
-          <label className="mt-1 flex items-center gap-2 text-[11px] text-slate-300">
+          <label className="mt-1 flex items-center gap-2 text-[11px] text-stone-300">
             <input type="checkbox" checked={performanceMode} onChange={(e) => setPerformanceMode(e.target.checked)} />
-            <span>Performance mode <span className="text-slate-500">(forces minimal)</span></span>
+            <span>Performance mode <span className="text-stone-500">(forces minimal)</span></span>
           </label>
-          <label className="flex items-center gap-2 text-[11px] text-slate-300">
+          <label className="flex items-center gap-2 text-[11px] text-stone-300">
             <input type="checkbox" checked={showLabels} onChange={(e) => setShowLabels(e.target.checked)} /><span>Body labels</span>
           </label>
-          <label className="flex items-center gap-2 text-[11px] text-slate-300">
+          <label className="flex items-center gap-2 text-[11px] text-stone-300">
             <input type="checkbox" checked={debug} onChange={(e) => setDebug(e.target.checked)} /><span>Renderer debug</span>
           </label>
         </div>
@@ -1347,10 +1347,10 @@ export function Dynamics3DView() {
           <div className="mb-1 flex gap-1">
             <button title="Play backward in time"
               onClick={() => { if (playing && playDir === -1) setPlaying(false); else { setPlayDir(-1); setPlaying(true); } }}
-              className={`${btn} flex-1 font-medium ${playing && playDir === -1 ? "bg-fuchsia-500/20 text-fuchsia-200" : "bg-white/5 text-slate-300 hover:bg-white/10"}`}>◀ Rev</button>
+              className={`${btn} flex-1 font-medium ${playing && playDir === -1 ? "bg-fuchsia-500/20 text-fuchsia-200" : "bg-white/5 text-stone-300 hover:bg-white/10"}`}>◀ Rev</button>
             <button title="Play forward in time"
               onClick={() => { if (playing && playDir === 1) setPlaying(false); else { setPlayDir(1); setPlaying(true); } }}
-              className={`${btn} flex-1 font-medium ${playing && playDir === 1 ? "bg-fuchsia-500/20 text-fuchsia-200" : "bg-cyan-500/15 text-cyan-200"}`}>{playing && playDir === 1 ? "❚❚ Pause" : "▶ Play"}</button>
+              className={`${btn} flex-1 font-medium ${playing && playDir === 1 ? "bg-fuchsia-500/20 text-fuchsia-200" : "bg-vermilion-500/15 text-vermilion-200"}`}>{playing && playDir === 1 ? "❚❚ Pause" : "▶ Play"}</button>
             <button onClick={() => { resetSimulation(simRef.current); playheadRef.current = -1; setPlaying(false); forceUI((n) => n + 1); }} className={`${btn} bg-white/5 hover:bg-white/10`} title="Restart from initial state">↻</button>
           </div>
           {/* frame stepping + jump to live edge */}
@@ -1363,7 +1363,7 @@ export function Dynamics3DView() {
           <div className="mb-1.5">
             <input type="range" className="w-full" min={0} max={Math.max(0, histEnd)} step={1} value={dispIndex}
               onChange={(e) => { setPlaying(false); setPlayhead(Number(e.target.value)); }} />
-            <div className="flex justify-between font-mono text-[10px] text-slate-500">
+            <div className="flex justify-between font-mono text-[10px] text-stone-500">
               <span>t = {dispTime.toFixed(3)}{scrubbingNow ? " (scrubbing)" : " (live)"}</span>
               <span>frame {dispIndex}/{Math.max(0, histEnd)}</span>
             </div>
@@ -1373,42 +1373,42 @@ export function Dynamics3DView() {
           <Range label="trail" value={trailLength} min={50} max={2000} step={50} onChange={setTrailLength} fmt={(v) => String(v)} />
           <Range label="history" value={historyCap} min={2000} max={120000} step={2000} onChange={setHistoryCap} fmt={(v) => (v >= 1000 ? `${Math.round(v / 1000)}k` : String(v))} />
           <div className="mt-1 flex items-center gap-1">
-            <span className="w-12 text-[11px] text-slate-500">solver</span>
+            <span className="w-12 text-[11px] text-stone-500">solver</span>
             {(["verlet", "rk4"] as Integrator[]).map((m) => (
               <button key={m} onClick={() => setIntegrator(m)} className={`${chip(integrator === m)} flex-1 uppercase`}>{m}</button>
             ))}
           </div>
-          <p className="mt-1 text-[10px] text-slate-500">Speed changes playback only — the physics dt is fixed (§5).</p>
+          <p className="mt-1 text-[10px] text-stone-500">Speed changes playback only — the physics dt is fixed (§5).</p>
         </div>
 
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Add body — click to place</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Add body — click to place</h3>
           <div className="flex flex-wrap gap-1">
             {Object.keys(BODY_PRESETS).map((k) => (
               <button key={k} onClick={() => armPlace(k)}
-                className={`rounded px-1.5 py-0.5 text-[11px] ${placeArm?.preset === k ? "bg-cyan-500/20 text-cyan-200 ring-1 ring-cyan-400/50" : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-cyan-200"}`}>{k}</button>
+                className={`rounded px-1.5 py-0.5 text-[11px] ${placeArm?.preset === k ? "bg-vermilion-500/20 text-vermilion-200 ring-1 ring-vermilion-400/50" : "bg-white/5 text-stone-400 hover:bg-white/10 hover:text-vermilion-200"}`}>{k}</button>
             ))}
           </div>
           <div className="mt-1 flex items-center gap-1">
-            <span className="w-12 text-[11px] text-slate-500">planet</span>
-            <select value={addVariant} onChange={(e) => setAddVariant(e.target.value as PlanetVariant)} className="flex-1 rounded bg-slate-800/80 px-1.5 py-0.5 text-[11px] capitalize text-cyan-100 outline-none">
+            <span className="w-12 text-[11px] text-stone-500">planet</span>
+            <select value={addVariant} onChange={(e) => setAddVariant(e.target.value as PlanetVariant)} className="flex-1 rounded bg-stone-800/80 px-1.5 py-0.5 text-[11px] capitalize text-vermilion-100 outline-none">
               {PLANET_VARIANTS.map((v) => <option key={v} value={v}>{v}</option>)}
             </select>
           </div>
           <Range label="spawn z" value={spawnZ} min={-15} max={15} step={1} onChange={setSpawnZ} fmt={(v) => String(v)} />
-          {placeArm && <p className="text-[10px] text-cyan-300">Click in the scene to place <b>{placeArm.preset}</b> (on z={spawnZ}). Click the button again to cancel.</p>}
+          {placeArm && <p className="text-[10px] text-vermilion-300">Click in the scene to place <b>{placeArm.preset}</b> (on z={spawnZ}). Click the button again to cancel.</p>}
         </div>
 
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Collisions</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Collisions</h3>
           <select value={collisionMode} onChange={(e) => setCollisionMode(e.target.value as CollisionMode)}
-            className="w-full rounded bg-slate-800/80 px-2 py-1 text-xs text-cyan-100 outline-none">
+            className="w-full rounded bg-stone-800/80 px-2 py-1 text-xs text-vermilion-100 outline-none">
             {(["ignore", "elastic", "merge", "absorb"] as CollisionMode[]).map((m) => <option key={m} value={m}>{m}</option>)}
           </select>
         </div>
 
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Visualization</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Visualization</h3>
           <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
             {(Object.keys(viz) as (keyof typeof viz)[]).map((k) => (
               <label key={k} className="flex items-center gap-1.5 text-[11px]">
@@ -1423,14 +1423,14 @@ export function Dynamics3DView() {
               {viz.deformation && <Range label="grid" value={deformRes} min={8} max={160} step={4} onChange={setDeformRes} fmt={(v) => `${v}²`} />}
               {viz.deformation && <Range label="deform" value={deformScale} min={0.01} max={0.4} step={0.01} onChange={setDeformScale} fmt={(v) => v.toFixed(2)} />}
               <Range label="extent" value={fieldExtent} min={8} max={60} step={2} onChange={setFieldExtent} fmt={(v) => String(v)} />
-              <p className="text-[9px] leading-tight text-slate-500">Field/deformation visualise the effective potential — not the Einstein metric.</p>
+              <p className="text-[9px] leading-tight text-stone-500">Field/deformation visualise the effective potential — not the Einstein metric.</p>
             </div>
           )}
         </div>
         </>)}
 
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Camera</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Camera</h3>
           <div className="flex flex-wrap gap-1">
             <button onClick={resetView} className={`${btn} bg-white/5 hover:bg-white/10`}>Reset</button>
             <button onClick={() => camPreset(0, 1.55)} className={`${btn} bg-white/5 hover:bg-white/10`}>Top</button>
@@ -1439,12 +1439,12 @@ export function Dynamics3DView() {
             <button onClick={() => { if (selected) targetD.current = [...selected.position] as Vec3; }} className={`${btn} bg-white/5 hover:bg-white/10`} title="Center camera on the selected body">Focus</button>
             <button onClick={() => { targetD.current = [0, 0, 0]; }} className={`${btn} bg-white/5 hover:bg-white/10`}>Recenter</button>
           </div>
-          <p className="mt-1 text-[10px] leading-tight text-slate-500"><b className="text-slate-400">Drag</b> to orbit · <b className="text-slate-400">wheel</b> to zoom · <b className="text-slate-400">Shift/right-drag</b> to pan · <b className="text-slate-400">WASD·QE</b> to fly. Motion is smoothed.</p>
+          <p className="mt-1 text-[10px] leading-tight text-stone-500"><b className="text-stone-400">Drag</b> to orbit · <b className="text-stone-400">wheel</b> to zoom · <b className="text-stone-400">Shift/right-drag</b> to pan · <b className="text-stone-400">WASD·QE</b> to fly. Motion is smoothed.</p>
         </div>
 
         {modelMode === "gravity" && (
         <div>
-          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Bodies</h3>
+          <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Bodies</h3>
           <div className="space-y-0.5">
             {sim.bodies.map((b) => (
               <button key={b.id} onClick={() => setSelectedId(b.id)}
@@ -1452,7 +1452,7 @@ export function Dynamics3DView() {
                 <span className="flex items-center gap-1.5">
                   <span className="inline-block h-2 w-2 rounded-full" style={{ background: TYPE_COLOR[b.type] }} />{b.name}
                 </span>
-                <span className="font-mono text-slate-500">{b.mass.toPrecision(3)}</span>
+                <span className="font-mono text-stone-500">{b.mass.toPrecision(3)}</span>
               </button>
             ))}
           </div>
@@ -1466,27 +1466,27 @@ export function Dynamics3DView() {
           onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onWheel={onWheel} onContextMenu={(e) => e.preventDefault()} />
         {/* system readout */}
         {modelMode === "gravity" ? (
-        <div className="pointer-events-none absolute left-2 top-2 rounded bg-black/50 px-2 py-1 font-mono text-[10px] text-slate-300">
+        <div className="pointer-events-none absolute left-2 top-2 rounded bg-black/50 px-2 py-1 font-mono text-[10px] text-stone-300">
           t = {rep.time.toFixed(3)} · steps {rep.steps} · dt {sim.dt.toFixed(3)} · bodies {rep.activeBodies}<br />
           E = {rep.total.toExponential(3)} · |p| = {rep.momentumMagnitude.toExponential(2)}<br />
-          <span className={rep.energyDrift > 0.05 ? "text-amber-400" : "text-slate-500"}>ΔE {(rep.energyDrift * 100).toFixed(2)}%</span> ·
-          {" "}<span className={rep.momentumDrift > 0.05 ? "text-amber-400" : "text-slate-500"}>Δp {(rep.momentumDrift * 100).toFixed(2)}%</span> · {rep.status}
+          <span className={rep.energyDrift > 0.05 ? "text-amber-400" : "text-stone-500"}>ΔE {(rep.energyDrift * 100).toFixed(2)}%</span> ·
+          {" "}<span className={rep.momentumDrift > 0.05 ? "text-amber-400" : "text-stone-500"}>Δp {(rep.momentumDrift * 100).toFixed(2)}%</span> · {rep.status}
         </div>
         ) : modelMode === "mathfield" ? (
-        <div className="pointer-events-none absolute left-2 top-2 rounded bg-black/50 px-2 py-1 font-mono text-[10px] text-slate-300">
+        <div className="pointer-events-none absolute left-2 top-2 rounded bg-black/50 px-2 py-1 font-mono text-[10px] text-stone-300">
           Mathematical Field — dx/dt={mfx || "0"}, dy/dt={mfy || "0"}, dz/dt={mfz || "0"}
         </div>
         ) : (
-        <div className="pointer-events-none absolute left-2 top-2 rounded bg-black/50 px-2 py-1 font-mono text-[10px] text-slate-300">
+        <div className="pointer-events-none absolute left-2 top-2 rounded bg-black/50 px-2 py-1 font-mono text-[10px] text-stone-300">
           General Relativity — {grModel.name} ({grModel.chart})<br />
           {grMetricId !== "minkowski" && <>M={grM.toFixed(2)}{grMetricId === "kerr" ? `, a=${grA.toFixed(2)}` : ""} · </>}
           τ₁={grTau1} · h={grH.toFixed(3)} · points {grCache.current.points.length}<br />
-          <span className={grCache.current.error ? "text-red-400" : grCache.current.termination !== "completed" ? "text-amber-400" : "text-slate-500"}>
+          <span className={grCache.current.error ? "text-red-400" : grCache.current.termination !== "completed" ? "text-amber-400" : "text-stone-500"}>
             {grCache.current.error ? `domainError: ${grCache.current.error}` : `termination: ${grCache.current.termination}`}
           </span>
         </div>
         )}
-        <div className="pointer-events-none absolute bottom-2 right-2 text-right text-[10px] text-slate-600">drag orbit · shift/right-drag pan · WASD/QE fly · wheel zoom · click select</div>
+        <div className="pointer-events-none absolute bottom-2 right-2 text-right text-[10px] text-stone-600">drag orbit · shift/right-drag pan · WASD/QE fly · wheel zoom · click select</div>
 
         {debug && (
           <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-2 py-1 font-mono text-[10px] text-emerald-300">
@@ -1497,12 +1497,12 @@ export function Dynamics3DView() {
 
         {/* inspector overlay */}
         {modelMode === "gravity" && selected && (
-          <div className="absolute right-2 top-2 w-60 rounded bg-black/70 p-2 text-[11px] text-slate-300 backdrop-blur">
+          <div className="absolute right-2 top-2 w-60 rounded bg-black/70 p-2 text-[11px] text-stone-300 backdrop-blur">
             <div className="mb-1 flex items-center justify-between">
               <span className="font-semibold" style={{ color: TYPE_COLOR[selected.type] }}>{selected.name}</span>
               <button onClick={() => removeBody(selected.id)} className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] hover:bg-red-500/20">remove</button>
             </div>
-            <p className="font-mono text-[10px] text-slate-400">
+            <p className="font-mono text-[10px] text-stone-400">
               type {selected.type}<br />
               x ({fv(selected.position)})<br />
               v ({fv(selected.velocity)}) |v|={norm(selected.velocity).toPrecision(3)}<br />
@@ -1511,23 +1511,23 @@ export function Dynamics3DView() {
             <div className="mt-1.5">
               <MassEdit label="mass" value={selected.mass} onChange={(m) => patchBody(selected.id, { mass: m })} />
               <MassEdit label="G-strength ×" value={selected.gravitationalStrength} onChange={(g) => patchBody(selected.id, { gravitationalStrength: g })} step />
-              <p className="text-[9px] text-slate-500">effectiveMass = {effectiveMass(selected).toPrecision(4)} (experimental source term)</p>
+              <p className="text-[9px] text-stone-500">effectiveMass = {effectiveMass(selected).toPrecision(4)} (experimental source term)</p>
               {selected.type === "planet" && (
                 <div className="mt-1 flex items-center gap-1">
-                  <span className="w-16 text-[10px] text-slate-500">variant</span>
+                  <span className="w-16 text-[10px] text-stone-500">variant</span>
                   <select value={getVariant(selected.id)} onChange={(e) => { variants.current.set(selected.id, e.target.value as PlanetVariant); forceUI((n) => n + 1); }}
-                    className="flex-1 rounded bg-slate-800/80 px-1 py-0.5 text-[10px] capitalize text-cyan-100 outline-none">
+                    className="flex-1 rounded bg-stone-800/80 px-1 py-0.5 text-[10px] capitalize text-vermilion-100 outline-none">
                     {PLANET_VARIANTS.map((v) => <option key={v} value={v}>{v}</option>)}
                   </select>
                 </div>
               )}
             </div>
             <div className="mt-1.5 border-t border-white/10 pt-1">
-              <p className="text-[10px] text-slate-500">Φ at body = {potentialAt(selected.position, dispBodies, sim.params, selected.id).toExponential(3)}</p>
-              <p className="text-[10px] text-slate-500">|g| = {norm(fieldAt(selected.position, dispBodies, sim.params, selected.id)).toExponential(3)}</p>
-              <p className="mt-1 text-[10px] font-semibold text-slate-400">Acceleration sources</p>
+              <p className="text-[10px] text-stone-500">Φ at body = {potentialAt(selected.position, dispBodies, sim.params, selected.id).toExponential(3)}</p>
+              <p className="text-[10px] text-stone-500">|g| = {norm(fieldAt(selected.position, dispBodies, sim.params, selected.id)).toExponential(3)}</p>
+              <p className="mt-1 text-[10px] font-semibold text-stone-400">Acceleration sources</p>
               {accelerationSources(selected, dispBodies, sim.params).slice(0, 4).map((s) => (
-                <div key={s.id} className="flex justify-between font-mono text-[10px]"><span className="text-slate-400">{s.name}</span><span>{(s.share * 100).toFixed(1)}%</span></div>
+                <div key={s.id} className="flex justify-between font-mono text-[10px]"><span className="text-stone-400">{s.name}</span><span>{(s.share * 100).toFixed(1)}%</span></div>
               ))}
             </div>
           </div>
@@ -1540,7 +1540,7 @@ export function Dynamics3DView() {
 // ── small presentational helpers ─────────────────────────────────────────────
 function Range({ label, value, min, max, step, onChange, fmt }: { label: string; value: number; min: number; max: number; step: number; onChange: (v: number) => void; fmt: (v: number) => string }) {
   return (
-    <label className="flex items-center gap-2 text-[11px] text-slate-400">
+    <label className="flex items-center gap-2 text-[11px] text-stone-400">
       <span className="w-10">{label}</span>
       <input type="range" className="flex-1" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} />
       <span className="w-10 text-right font-mono">{fmt(value)}</span>
@@ -1552,11 +1552,11 @@ function MassEdit({ label, value, onChange, step }: { label: string; value: numb
   const mult = step ? [0, 0.25, 0.5, 1, 2, 5, 10] : null;
   return (
     <div className="mb-1 flex items-center gap-1">
-      <span className="w-16 text-[10px] text-slate-500">{label}</span>
+      <span className="w-16 text-[10px] text-stone-500">{label}</span>
       {mult ? (
         <div className="flex flex-1 flex-wrap gap-0.5">
           {mult.map((m) => (
-            <button key={m} onClick={() => onChange(m)} className={`rounded px-1 py-0.5 text-[9px] ${Math.abs(value - m) < 1e-9 ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-slate-400 hover:bg-white/10"}`}>{m}x</button>
+            <button key={m} onClick={() => onChange(m)} className={`rounded px-1 py-0.5 text-[9px] ${Math.abs(value - m) < 1e-9 ? "bg-vermilion-500/20 text-vermilion-200" : "bg-white/5 text-stone-400 hover:bg-white/10"}`}>{m}x</button>
           ))}
         </div>
       ) : (
@@ -1600,7 +1600,7 @@ function drawBodyMinimal(ctx: CanvasRenderingContext2D, p: { shader: string; bas
   switch (p.shader) {
     case "point": ctx.fillStyle = p.baseColor; disc(ctx, x, y, Math.max(1.5, rr * 0.6)); break;
     case "star": ctx.fillStyle = p.baseColor; disc(ctx, x, y, rr); ctx.strokeStyle = hexA(p.baseColor, 0.6); ctx.lineWidth = 1; ring(ctx, x, y, rr + 2); break;
-    case "black-hole": ctx.strokeStyle = p.baseColor; ctx.lineWidth = 1.5; ring(ctx, x, y, rr + 1); ctx.fillStyle = "#0a0a12"; disc(ctx, x, y, rr * 0.55); break;
+    case "black-hole": ctx.strokeStyle = p.baseColor; ctx.lineWidth = 1.5; ring(ctx, x, y, rr + 1); ctx.fillStyle = "#131311"; disc(ctx, x, y, rr * 0.55); break;
     case "singularity":
       ctx.fillStyle = p.baseColor; disc(ctx, x, y, rr * 0.5);
       ctx.strokeStyle = hexA(p.baseColor, 0.8); ctx.lineWidth = 1;
@@ -1656,7 +1656,7 @@ function drawBodyCelestial(
       glow.addColorStop(0, hexA("#a78bfa", 0.28)); glow.addColorStop(1, hexA("#a78bfa", 0));
       ctx.fillStyle = glow; disc(ctx, x, y, r * 1.7);
       const core = ctx.createRadialGradient(x, y, r * 0.2, x, y, r);
-      core.addColorStop(0, "#04040a"); core.addColorStop(0.85, "#0a0a14"); core.addColorStop(1, hexA("#a78bfa", 0.5));
+      core.addColorStop(0, "#131311"); core.addColorStop(0.85, "#131311"); core.addColorStop(1, hexA("#a78bfa", 0.5));
       ctx.fillStyle = core; disc(ctx, x, y, r);
       break;
     }

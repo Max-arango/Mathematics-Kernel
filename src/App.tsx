@@ -11,6 +11,7 @@ import { DynamicsView } from "./components/dynamics/DynamicsView.tsx";
 import { useStore, type AppMode } from "./store.ts";
 import { useNotebook } from "./experiment/notebookStore.ts";
 import { searchMath, type SearchEntry } from "./search/mathSearch.ts";
+import { LogoMark } from "./components/Logo.tsx";
 
 // KaTeX-heavy views are lazy-loaded to keep the initial bundle lean.
 const DocsView = lazy(() => import("./components/docs/DocsView.tsx").then((m) => ({ default: m.DocsView })));
@@ -69,15 +70,15 @@ function MathSearch() {
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         placeholder="Search… (eigenvalue, RK4, Lorenz, …)"
-        className="w-56 rounded bg-white/5 px-2 py-1 text-xs text-slate-200 outline-none ring-1 ring-white/10 focus:ring-cyan-400/40"
+        className="w-56 rounded bg-white/5 px-2 py-1 text-xs text-stone-200 outline-none ring-1 ring-white/10 focus:ring-vermilion-400/40"
       />
       {open && query.trim() && (
-        <div className="absolute right-0 top-full z-50 mt-1 max-h-72 w-72 overflow-y-auto rounded border border-white/10 bg-[#0a0e18] shadow-xl">
-          {hits.length === 0 && <div className="px-3 py-2 text-xs text-slate-500">No matches</div>}
+        <div className="absolute right-0 top-full z-50 mt-1 max-h-72 w-72 overflow-y-auto rounded border border-white/10 bg-[#1c1b18] shadow-xl">
+          {hits.length === 0 && <div className="px-3 py-2 text-xs text-stone-500">No matches</div>}
           {hits.map((h) => (
             <button key={h.id} onMouseDown={() => go(h)}
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-300 hover:bg-white/5">
-              <span className="rounded bg-white/5 px-1 text-[9px] uppercase text-slate-500">{kindLabel[h.kind]}</span>
+              className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-stone-300 hover:bg-white/5">
+              <span className="rounded bg-white/5 px-1 text-[9px] uppercase text-stone-500">{kindLabel[h.kind]}</span>
               <span className="truncate">{h.title}</span>
             </button>
           ))}
@@ -103,14 +104,21 @@ function ModeNav() {
     { id: "docs", label: "Docs" },
   ];
   return (
-    <div className="flex items-center gap-1 border-b border-white/5 bg-[#05070d] px-3 py-1.5">
-      <span className="mr-3 text-sm font-bold tracking-widest text-cyan-300">MATH·LAB</span>
+    <div className="graph-paper flex items-center gap-1 overflow-x-auto border-b border-line bg-void px-3 py-2 scroll-thin">
+      <span className="mr-3 flex shrink-0 items-center gap-2 text-ink">
+        <LogoMark className="size-6 shrink-0" />
+        <span className="font-display text-[19px] leading-none tracking-tight">
+          Mathematics <em className="text-vermilion-400">Simulator</em>
+        </span>
+      </span>
       {tabs.map((t) => (
         <button
           key={t.id}
           onClick={() => setAppMode(t.id)}
-          className={`rounded px-3 py-1 text-xs font-medium transition ${
-            appMode === t.id ? "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/40" : "text-slate-400 hover:bg-white/5"
+          className={`shrink-0 rounded-sm px-3 py-1 text-xs font-medium transition ${
+            appMode === t.id
+              ? "bg-vermilion-500/15 text-vermilion-200 ring-1 ring-vermilion-400/40"
+              : "text-graphite hover:bg-white/5 hover:text-ink"
           }`}
         >
           {t.label}
@@ -144,19 +152,19 @@ export function App() {
       ) : appMode === "dynamics" ? (
         <DynamicsView />
       ) : appMode === "dynamics3d" ? (
-        <Suspense fallback={<div className="p-8 text-sm text-slate-500">Loading…</div>}>
+        <Suspense fallback={<div className="p-8 text-sm text-stone-500">Loading…</div>}>
           <Dynamics3DView />
         </Suspense>
       ) : appMode === "inspector" ? (
-        <Suspense fallback={<div className="p-8 text-sm text-slate-500">Loading…</div>}>
+        <Suspense fallback={<div className="p-8 text-sm text-stone-500">Loading…</div>}>
           <InspectorView />
         </Suspense>
       ) : appMode === "notebook" ? (
-        <Suspense fallback={<div className="p-8 text-sm text-slate-500">Loading…</div>}>
+        <Suspense fallback={<div className="p-8 text-sm text-stone-500">Loading…</div>}>
           <NotebookView />
         </Suspense>
       ) : appMode === "docs" ? (
-        <Suspense fallback={<div className="p-8 text-sm text-slate-500">Loading…</div>}>
+        <Suspense fallback={<div className="p-8 text-sm text-stone-500">Loading…</div>}>
           <DocsView />
         </Suspense>
       ) : (

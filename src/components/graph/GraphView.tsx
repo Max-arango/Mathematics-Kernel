@@ -74,13 +74,13 @@ export function GraphView() {
         <main className="relative min-h-0 min-w-0 flex-1">
         {mode === "2d" ? <Plot2D scene={scene} onTrace={setTrace} /> : <Plot3D scene={scene} />}
         {mode === "2d" && (
-          <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-3 py-1.5 font-mono text-[11px] tabular-nums text-slate-300">
+          <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-3 py-1.5 font-mono text-[11px] tabular-nums text-stone-300">
             {trace ? (
               <>
                 x = {trace.x.toFixed(4)} &nbsp; y = {trace.y.toFixed(4)}
                 {readout && Number.isFinite(readout.fx) && (
                   <>
-                    {"  "}· f(x) = <span className="text-cyan-300">{readout.fx.toFixed(4)}</span>
+                    {"  "}· f(x) = <span className="text-vermilion-300">{readout.fx.toFixed(4)}</span>
                     {"  "}· f'(x) = <span className="text-emerald-300">{readout.dfx.toFixed(4)}</span>
                   </>
                 )}

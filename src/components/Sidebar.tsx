@@ -6,8 +6,11 @@ import { ExpressionPanel } from "./ExpressionPanel.tsx";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border-b border-white/5 px-4 py-3">
-      <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-cyan-300/70">{title}</h2>
+    <div className="border-b border-line px-4 py-3">
+      <h2 className="mono-label mb-2 flex items-center gap-2 text-vermilion-300/80">
+        <span aria-hidden className="inline-block size-[6px] bg-vermilion-400" />
+        {title}
+      </h2>
       {children}
     </div>
   );
@@ -21,11 +24,11 @@ function ParamControl({ def }: { def: ParamDef }) {
   return (
     <div className="mb-3">
       <div className="mb-1 flex items-center justify-between text-xs">
-        <span className="text-slate-300">{def.label}</span>
+        <span className="text-stone-300">{def.label}</span>
         <div className="flex items-center gap-1">
           <input
             type="number"
-            className="w-20 rounded bg-slate-800/80 px-1.5 py-0.5 text-right text-cyan-200 tabular-nums outline-none focus:ring-1 focus:ring-cyan-400"
+            className="w-20 rounded bg-stone-800/80 px-1.5 py-0.5 text-right text-vermilion-200 tabular-nums outline-none focus:ring-1 focus:ring-vermilion-400"
             value={value}
             min={def.min}
             max={def.max}
@@ -34,7 +37,7 @@ function ParamControl({ def }: { def: ParamDef }) {
           />
           <button
             title="Reset"
-            className="text-slate-500 hover:text-cyan-300"
+            className="text-stone-500 hover:text-vermilion-300"
             onClick={() => setParam(def.key, def.default)}
           >
             ↺
@@ -50,9 +53,9 @@ function ParamControl({ def }: { def: ParamDef }) {
         value={value}
         onChange={(e) => setParam(def.key, Number(e.target.value))}
       />
-      <div className="mt-0.5 flex justify-between text-[10px] text-slate-600">
+      <div className="mt-0.5 flex justify-between text-[10px] text-stone-600">
         <span>{def.min}</span>
-        <span className="tabular-nums text-slate-400">{value.toFixed(decimals)}</span>
+        <span className="tabular-nums text-stone-400">{value.toFixed(decimals)}</span>
         <span>{def.max}</span>
       </div>
     </div>
@@ -74,7 +77,7 @@ export function Sidebar() {
   const active = FRACTAL_BY_ID[activeId];
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col overflow-y-auto border-r border-white/5 bg-[#080b14]">
+    <aside className="scroll-thin flex w-72 shrink-0 flex-col overflow-y-auto border-r border-line bg-void-soft">
       <Section title="Fractal">
         <div className="grid gap-1">
           {FRACTALS.map((f) => (
@@ -83,8 +86,8 @@ export function Sidebar() {
               onClick={() => setActive(f.id)}
               className={`rounded px-3 py-1.5 text-left text-sm transition ${
                 f.id === activeId
-                  ? "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/40"
-                  : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                  ? "bg-vermilion-500/15 text-vermilion-200 ring-1 ring-vermilion-400/40"
+                  : "text-stone-400 hover:bg-white/5 hover:text-stone-200"
               }`}
             >
               {f.name}
@@ -95,7 +98,7 @@ export function Sidebar() {
           <button
             onClick={() => setPickMode(!pickMode)}
             className={`mt-2 w-full rounded px-3 py-1.5 text-xs transition ${
-              pickMode ? "bg-fuchsia-500/20 text-fuchsia-200 ring-1 ring-fuchsia-400/50" : "bg-white/5 text-slate-400 hover:text-slate-200"
+              pickMode ? "bg-fuchsia-500/20 text-fuchsia-200 ring-1 ring-fuchsia-400/50" : "bg-white/5 text-stone-400 hover:text-stone-200"
             }`}
           >
             {pickMode ? "Click plane to spawn Julia…" : "→ Pick Julia from a point"}
@@ -109,7 +112,7 @@ export function Sidebar() {
         {active.params.map((p) => (
           <ParamControl key={p.key} def={p} />
         ))}
-        <button onClick={resetParams} className="mt-1 text-xs text-slate-500 hover:text-cyan-300">
+        <button onClick={resetParams} className="mt-1 text-xs text-stone-500 hover:text-vermilion-300">
           Reset all parameters
         </button>
       </Section>
@@ -123,14 +126,14 @@ export function Sidebar() {
               key={name}
               onClick={() => setColor({ palette: i })}
               className={`rounded px-1 py-1 text-[11px] transition ${
-                palette === i ? "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/40" : "text-slate-400 hover:bg-white/5"
+                palette === i ? "bg-vermilion-500/15 text-vermilion-200 ring-1 ring-vermilion-400/40" : "text-stone-400 hover:bg-white/5"
               }`}
             >
               {name}
             </button>
           ))}
         </div>
-        <label className="mb-1 flex items-center justify-between text-xs text-slate-300">
+        <label className="mb-1 flex items-center justify-between text-xs text-stone-300">
           <span>Density</span>
           <input
             type="range"
@@ -142,7 +145,7 @@ export function Sidebar() {
             onChange={(e) => setColor({ colorScale: Number(e.target.value) })}
           />
         </label>
-        <label className="mb-1 flex items-center justify-between text-xs text-slate-300">
+        <label className="mb-1 flex items-center justify-between text-xs text-stone-300">
           <span>Offset</span>
           <input
             type="range"
@@ -154,7 +157,7 @@ export function Sidebar() {
             onChange={(e) => setColor({ colorOffset: Number(e.target.value) })}
           />
         </label>
-        <label className="flex items-center gap-2 text-xs text-slate-300">
+        <label className="flex items-center gap-2 text-xs text-stone-300">
           <input type="checkbox" checked={invert} onChange={(e) => setColor({ invert: e.target.checked })} />
           Invert colors
         </label>

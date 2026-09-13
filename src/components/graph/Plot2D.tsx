@@ -69,13 +69,13 @@ export function Plot2D({ scene, onTrace }: { scene: Scene; onTrace: (t: { x: num
     ctx.fillStyle = "#5a6b8a";
     for (let gx = Math.ceil(xMin / step) * step; gx <= xMax; gx += step) {
       const px = toPxX(gx);
-      ctx.strokeStyle = Math.abs(gx) < step / 2 ? "#41506e" : "#141b28";
+      ctx.strokeStyle = Math.abs(gx) < step / 2 ? "#41506e" : "#26251f";
       ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, h); ctx.stroke();
       if (Math.abs(gx) > step / 2) ctx.fillText(fmt(gx), px + 2, axisY - 3);
     }
     for (let gy = Math.ceil(yBot / step) * step; gy <= yTop; gy += step) {
       const py = toPxY(gy);
-      ctx.strokeStyle = Math.abs(gy) < step / 2 ? "#41506e" : "#141b28";
+      ctx.strokeStyle = Math.abs(gy) < step / 2 ? "#41506e" : "#26251f";
       ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(w, py); ctx.stroke();
       if (Math.abs(gy) > step / 2) ctx.fillText(fmt(gy), axisX + 3, py - 2);
     }

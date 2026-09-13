@@ -20,7 +20,7 @@ const PRESETS: { name: string; s: State }[] = [
   { name: "|−i⟩", s: [{ re: R2, im: 0 }, { re: 0, im: -R2 }] },
 ];
 
-const gateBtn = "rounded bg-cyan-500/15 px-0 py-2 text-sm font-semibold text-cyan-100 ring-1 ring-cyan-400/30 hover:bg-cyan-500/30 transition";
+const gateBtn = "rounded bg-vermilion-500/15 px-0 py-2 text-sm font-semibold text-vermilion-100 ring-1 ring-vermilion-400/30 hover:bg-vermilion-500/30 transition";
 
 export function BlochView() {
   const state = useBloch((s) => s.state);
@@ -51,7 +51,7 @@ export function BlochView() {
 
   return (
     <div className="flex min-h-0 flex-1">
-      <aside className="flex w-80 shrink-0 flex-col overflow-y-auto border-r border-white/5 bg-[#080b14]">
+      <aside className="flex w-80 shrink-0 flex-col overflow-y-auto border-r border-white/5 bg-[#1c1b18]">
         <Section title="Quantum gates">
           <div className="grid grid-cols-4 gap-1.5">
             {GATE_ROWS.flat().map((g) => (
@@ -61,7 +61,7 @@ export function BlochView() {
         </Section>
 
         <Section title="Rotations">
-          <div className="mb-1 flex items-center justify-between text-xs text-slate-300">
+          <div className="mb-1 flex items-center justify-between text-xs text-stone-300">
             <span>angle</span>
             <div className="flex items-center gap-0.5">
               <input
@@ -69,15 +69,15 @@ export function BlochView() {
                 step={5}
                 value={angle}
                 onChange={(e) => setAngle(Math.max(-360, Math.min(360, Number(e.target.value) || 0)))}
-                className="w-16 rounded bg-slate-800/80 px-1 py-0.5 text-right font-mono text-[11px] text-cyan-200 tabular-nums outline-none focus:ring-1 focus:ring-cyan-400"
+                className="w-16 rounded bg-stone-800/80 px-1 py-0.5 text-right font-mono text-[11px] text-vermilion-200 tabular-nums outline-none focus:ring-1 focus:ring-vermilion-400"
               />
-              <span className="text-slate-500">°</span>
+              <span className="text-stone-500">°</span>
             </div>
           </div>
           <input type="range" className="mb-2 w-full" min={-360} max={360} step={5} value={angle} onChange={(e) => setAngle(Number(e.target.value))} />
           <div className="grid grid-cols-3 gap-1.5">
             {(["x", "y", "z"] as const).map((ax) => (
-              <button key={ax} className="rounded bg-white/5 py-1.5 text-sm text-slate-200 hover:bg-white/10" onClick={() => rotate(ax, angle)}>
+              <button key={ax} className="rounded bg-white/5 py-1.5 text-sm text-stone-200 hover:bg-white/10" onClick={() => rotate(ax, angle)}>
                 R{ax}
               </button>
             ))}
@@ -89,21 +89,21 @@ export function BlochView() {
           <PulseSlider label="Δ detuning" value={pulse.detuning} min={-2} max={2} step={0.05} onChange={(v) => setP({ detuning: v })} />
           <PulseSlider label="φ phase" value={pulse.phase} min={0} max={360} step={5} unit="°" onChange={(v) => setP({ phase: v })} />
           <PulseSlider label="t duration" value={pulse.dur} min={0} max={2 * Math.PI} step={0.05} onChange={(v) => setP({ dur: v })} />
-          <p className="mb-2 font-mono text-[10px] text-cyan-300/80">
+          <p className="mb-2 font-mono text-[10px] text-vermilion-300/80">
             → rotate {((pAngle * 180) / Math.PI).toFixed(0)}° about ({axis.map((a) => a.toFixed(2)).join(", ")})
           </p>
           <div className="grid grid-cols-3 gap-1.5">
-            <button className="rounded bg-cyan-500/20 py-1.5 text-xs font-medium text-cyan-100 ring-1 ring-cyan-400/40 hover:bg-cyan-500/30" onClick={() => applyPulse()}>Apply</button>
-            <button className="rounded bg-white/5 py-1.5 text-xs text-slate-200 hover:bg-white/10" onClick={() => applyPulse(Math.PI)}>π pulse</button>
-            <button className="rounded bg-white/5 py-1.5 text-xs text-slate-200 hover:bg-white/10" onClick={() => applyPulse(Math.PI / 2)}>π/2</button>
+            <button className="rounded bg-vermilion-500/20 py-1.5 text-xs font-medium text-vermilion-100 ring-1 ring-vermilion-400/40 hover:bg-vermilion-500/30" onClick={() => applyPulse()}>Apply</button>
+            <button className="rounded bg-white/5 py-1.5 text-xs text-stone-200 hover:bg-white/10" onClick={() => applyPulse(Math.PI)}>π pulse</button>
+            <button className="rounded bg-white/5 py-1.5 text-xs text-stone-200 hover:bg-white/10" onClick={() => applyPulse(Math.PI / 2)}>π/2</button>
           </div>
-          <p className="mt-1.5 text-[10px] text-slate-600">cyan axis + ghost arc = live preview</p>
+          <p className="mt-1.5 text-[10px] text-stone-600">cyan axis + ghost arc = live preview</p>
         </Section>
 
         <Section title="Set state">
           <div className="grid grid-cols-3 gap-1.5">
             {PRESETS.map((p) => (
-              <button key={p.name} className="rounded bg-white/5 py-1.5 text-xs text-slate-200 hover:bg-white/10" onClick={() => setState(p.s, `set ${p.name}`)}>
+              <button key={p.name} className="rounded bg-white/5 py-1.5 text-xs text-stone-200 hover:bg-white/10" onClick={() => setState(p.s, `set ${p.name}`)}>
                 {p.name}
               </button>
             ))}
@@ -112,16 +112,16 @@ export function BlochView() {
 
         <Section title="History">
           <div className="flex gap-2">
-            <button className="flex-1 rounded bg-white/5 py-1.5 text-xs text-slate-300 hover:bg-white/10" onClick={undo}>↶ Undo</button>
-            <button className="flex-1 rounded bg-white/5 py-1.5 text-xs text-slate-300 hover:bg-white/10" onClick={reset}>⟲ Reset |0⟩</button>
+            <button className="flex-1 rounded bg-white/5 py-1.5 text-xs text-stone-300 hover:bg-white/10" onClick={undo}>↶ Undo</button>
+            <button className="flex-1 rounded bg-white/5 py-1.5 text-xs text-stone-300 hover:bg-white/10" onClick={reset}>⟲ Reset |0⟩</button>
           </div>
           <button
             onClick={toggleTrail}
-            className={`mt-2 w-full rounded py-1.5 text-xs transition ${showTrail ? "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/30" : "bg-white/5 text-slate-500 hover:text-slate-300"}`}
+            className={`mt-2 w-full rounded py-1.5 text-xs transition ${showTrail ? "bg-vermilion-500/15 text-vermilion-200 ring-1 ring-vermilion-400/30" : "bg-white/5 text-stone-500 hover:text-stone-300"}`}
           >
             {showTrail ? "✓ Trail visible" : "Trail hidden"}
           </button>
-          <div className="mt-2 max-h-24 overflow-y-auto font-mono text-[11px] text-slate-500">
+          <div className="mt-2 max-h-24 overflow-y-auto font-mono text-[11px] text-stone-500">
             {log.length ? log.slice(-12).map((l, i) => <div key={i}>{l}</div>) : <span>no operations</span>}
           </div>
         </Section>
@@ -132,12 +132,12 @@ export function BlochView() {
         <div className="absolute left-2 top-2">
           <ProbabilityBars />
         </div>
-        <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-3 py-2 font-mono text-[11px] text-slate-300">
-          <div>|ψ⟩ = <span className="text-cyan-300">{ampString(state[0])}</span> |0⟩ + <span className="text-cyan-300">{ampString(state[1])}</span> |1⟩</div>
-          <div className="mt-1 text-slate-400">θ = {deg(theta)} &nbsp; φ = {deg(phi)}</div>
-          <div className="text-slate-400">Bloch = ({x.toFixed(3)}, {y.toFixed(3)}, {z.toFixed(3)})</div>
+        <div className="pointer-events-none absolute bottom-2 left-2 rounded bg-black/60 px-3 py-2 font-mono text-[11px] text-stone-300">
+          <div>|ψ⟩ = <span className="text-vermilion-300">{ampString(state[0])}</span> |0⟩ + <span className="text-vermilion-300">{ampString(state[1])}</span> |1⟩</div>
+          <div className="mt-1 text-stone-400">θ = {deg(theta)} &nbsp; φ = {deg(phi)}</div>
+          <div className="text-stone-400">Bloch = ({x.toFixed(3)}, {y.toFixed(3)}, {z.toFixed(3)})</div>
         </div>
-        <div className="pointer-events-none absolute right-2 top-2 rounded bg-black/60 px-2 py-1 font-mono text-[10px] text-slate-500">
+        <div className="pointer-events-none absolute right-2 top-2 rounded bg-black/60 px-2 py-1 font-mono text-[10px] text-stone-500">
           drag rotate · wheel zoom
         </div>
       </main>
@@ -149,7 +149,7 @@ function PulseSlider({ label, value, min, max, step, unit, onChange }: { label: 
   const clamp = (v: number) => (Number.isFinite(v) ? Math.max(min, Math.min(max, v)) : min);
   return (
     <div className="mb-1.5">
-      <div className="mb-0.5 flex items-center justify-between text-[11px] text-slate-300">
+      <div className="mb-0.5 flex items-center justify-between text-[11px] text-stone-300">
         <span>{label}</span>
         <div className="flex items-center gap-0.5">
           <input
@@ -157,9 +157,9 @@ function PulseSlider({ label, value, min, max, step, unit, onChange }: { label: 
             step={step}
             value={Number(value.toFixed(unit === "°" ? 0 : 3))}
             onChange={(e) => onChange(clamp(Number(e.target.value)))}
-            className="w-16 rounded bg-slate-800/80 px-1 py-0.5 text-right font-mono text-[11px] text-cyan-200 tabular-nums outline-none focus:ring-1 focus:ring-cyan-400"
+            className="w-16 rounded bg-stone-800/80 px-1 py-0.5 text-right font-mono text-[11px] text-vermilion-200 tabular-nums outline-none focus:ring-1 focus:ring-vermilion-400"
           />
-          {unit && <span className="text-slate-500">{unit}</span>}
+          {unit && <span className="text-stone-500">{unit}</span>}
         </div>
       </div>
       <input type="range" className="w-full" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} />
@@ -170,7 +170,7 @@ function PulseSlider({ label, value, min, max, step, unit, onChange }: { label: 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="border-b border-white/5 px-4 py-3">
-      <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-cyan-300/70">{title}</h2>
+      <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">{title}</h2>
       {children}
     </div>
   );

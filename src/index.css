@@ -1,7 +1,63 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------ */
+/*  Self-hosted type deck (from the Mathematics-Landing design system) */
+/*  Inter — UI · Instrument Serif — display/math · JetBrains Mono — labels */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/instrument-serif.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/instrument-serif-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jbmono-var.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Laboratory palette — the "void" (dark) register the landing uses to
+     present the simulator itself. Warm near-black paper, vermilion accent. */
+  --color-void: #131311;
+  --color-void-soft: #1c1b18;
+  --color-surface: #26251f;
+  --color-ink: #f0eee5;
+  --color-graphite: #a5a294;
+  --color-line: rgba(240, 238, 229, 0.12);
+
+  /* Vermilion ramp — replaces the old cyan accent, light→dark. */
+  --color-vermilion-100: #f8d7c6;
+  --color-vermilion-200: #f2ad8b;
+  --color-vermilion-300: #ea865c;
+  --color-vermilion-400: #e0673d;
+  --color-vermilion-500: #c2451d;
+  --color-vermilion-600: #a33715;
+
+  /* Secondary lab hues */
+  --color-teal: #4bbfa8;
+  --color-amber: #d9a441;
 }
 
 html,
@@ -9,18 +65,81 @@ body,
 #root {
   height: 100%;
   margin: 0;
-  background: #05070d;
-  color: #d7e0f0;
+  background: var(--color-void);
+  color: var(--color-ink);
   overflow: hidden;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Compact range sliders for the parameter panel */
+@layer utilities {
+  /* ---- Graph-paper texture (light grid on warm void) ---- */
+  .graph-paper {
+    background-image:
+      linear-gradient(to right, rgba(240, 238, 229, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(240, 238, 229, 0.05) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+  .graph-paper-fine {
+    background-image:
+      linear-gradient(to right, rgba(240, 238, 229, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(240, 238, 229, 0.04) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+  .graph-paper-vignette {
+    -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 20%, black 55%, transparent 100%);
+    mask-image: radial-gradient(ellipse 90% 80% at 50% 20%, black 55%, transparent 100%);
+  }
+
+  /* ---- Typography helpers ---- */
+  .math {
+    font-family: var(--font-display);
+    font-style: italic;
+    letter-spacing: 0.01em;
+  }
+  .math-up {
+    font-family: var(--font-display);
+    font-style: normal;
+  }
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* ---- Custom scrollbar ---- */
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(240, 238, 229, 0.28) transparent;
+  }
+  .scroll-thin::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  .scroll-thin::-webkit-scrollbar-thumb {
+    background: rgba(240, 238, 229, 0.28);
+    border-radius: 4px;
+  }
+  .scroll-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* ---- Focus visibility for custom interactive regions ---- */
+  .focusable:focus-visible {
+    outline: 2px solid var(--color-vermilion-400);
+    outline-offset: 3px;
+  }
+}
+
+/* Compact range sliders — vermilion thumb on a faint ink track. */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   height: 4px;
   border-radius: 2px;
-  background: #1c2740;
+  background: rgba(240, 238, 229, 0.14);
   outline: none;
 }
 input[type="range"]::-webkit-slider-thumb {
@@ -29,15 +148,21 @@ input[type="range"]::-webkit-slider-thumb {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #38e0c8;
+  background: var(--color-vermilion-400);
   cursor: pointer;
-  box-shadow: 0 0 6px #38e0c8aa;
+  box-shadow: 0 0 0 1.5px rgba(240, 238, 229, 0.28);
 }
 input[type="range"]::-moz-range-thumb {
   width: 13px;
   height: 13px;
   border: none;
   border-radius: 50%;
-  background: #38e0c8;
+  background: var(--color-vermilion-400);
   cursor: pointer;
+  box-shadow: 0 0 0 1.5px rgba(240, 238, 229, 0.28);
+}
+
+::selection {
+  background: rgba(224, 103, 61, 0.32);
+  color: #fdf9f4;
 }

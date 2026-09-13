@@ -10,13 +10,13 @@ const ODE_METHODS = methodsByFamily("ODESolver");
 
 const CONF_COLOR: Record<Confidence, string> = {
   exact: "bg-emerald-500/15 text-emerald-300",
-  symbolic: "bg-cyan-500/15 text-cyan-300",
+  symbolic: "bg-vermilion-500/15 text-vermilion-300",
   numerical: "bg-sky-500/15 text-sky-300",
   estimated: "bg-amber-500/15 text-amber-300",
   inferred: "bg-violet-500/15 text-violet-300",
   heuristic: "bg-orange-500/15 text-orange-300",
   unsupported: "bg-red-500/15 text-red-300",
-  notApplicable: "bg-slate-600/20 text-slate-400",
+  notApplicable: "bg-stone-600/20 text-stone-400",
 };
 
 function Tex({ src, display = false }: { src: string; display?: boolean }) {
@@ -27,10 +27,10 @@ function Tex({ src, display = false }: { src: string; display?: boolean }) {
 function PropRow({ p }: { p: Property }) {
   return (
     <div className="flex items-start justify-between gap-3 border-b border-white/5 py-1 last:border-0">
-      <span className="shrink-0 text-xs text-slate-400">{p.label}</span>
-      <span className="min-w-0 flex-1 text-right font-mono text-xs text-slate-100">
+      <span className="shrink-0 text-xs text-stone-400">{p.label}</span>
+      <span className="min-w-0 flex-1 text-right font-mono text-xs text-stone-100">
         {p.latex ? <Tex src={p.latex} /> : p.value}
-        {p.note && <span className="ml-1 text-[10px] text-slate-500">({p.note})</span>}
+        {p.note && <span className="ml-1 text-[10px] text-stone-500">({p.note})</span>}
       </span>
       <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] ${CONF_COLOR[p.confidence]}`}>{p.confidence}</span>
     </div>
@@ -108,7 +108,7 @@ export function InspectorView() {
     return null;
   }, [obj, kind, cmpId, cmpExpr]);
 
-  const inputCls = "w-full rounded bg-slate-800/80 px-2 py-1.5 font-mono text-sm text-cyan-100 outline-none focus:ring-1 focus:ring-cyan-400";
+  const inputCls = "w-full rounded bg-stone-800/80 px-2 py-1.5 font-mono text-sm text-vermilion-100 outline-none focus:ring-1 focus:ring-vermilion-400";
 
   const navigate = (target: MathObject) => {
     setHistory((h) => [...h, obj]);
@@ -128,13 +128,13 @@ export function InspectorView() {
   return (
     <div className="flex min-h-0 flex-1">
       {/* Left: object input */}
-      <aside className="flex w-80 shrink-0 flex-col gap-3 overflow-y-auto border-r border-white/5 bg-[#080b14] p-3">
+      <aside className="flex w-80 shrink-0 flex-col gap-3 overflow-y-auto border-r border-white/5 bg-[#1c1b18] p-3">
         <div>
-          <h2 className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-cyan-300/70">Object</h2>
+          <h2 className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">Object</h2>
           <div className="grid grid-cols-4 gap-1">
             {(["expression", "matrix", "vector", "topology", "dynamicalSystem", "ode", "distribution", "dataset", "timeSeries"] as Kind[]).map((k) => (
               <button key={k} onClick={() => setKind(k)}
-                className={`rounded px-1 py-1 text-[11px] capitalize transition ${kind === k ? "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/40" : "text-slate-400 hover:bg-white/5"}`}>
+                className={`rounded px-1 py-1 text-[11px] capitalize transition ${kind === k ? "bg-vermilion-500/15 text-vermilion-200 ring-1 ring-vermilion-400/40" : "text-stone-400 hover:bg-white/5"}`}>
                 {k === "expression" ? "expr" : k === "dynamicalSystem" ? "dyn sys" : k === "timeSeries" ? "time ser." : k}
               </button>
             ))}
@@ -152,11 +152,11 @@ export function InspectorView() {
         {kind === "dynamicalSystem" && (
           <>
             <div>
-              <label className="text-[10px] uppercase text-slate-500">state variables (comma-separated)</label>
+              <label className="text-[10px] uppercase text-stone-500">state variables (comma-separated)</label>
               <input className={inputCls} value={sysVars} spellCheck={false} onChange={(e) => setSysVars(e.target.value)} />
             </div>
             <div>
-              <label className="text-[10px] uppercase text-slate-500">dx_i/dt (one per line)</label>
+              <label className="text-[10px] uppercase text-stone-500">dx_i/dt (one per line)</label>
               <textarea className={`${inputCls} h-20 resize-none`} value={sysField} spellCheck={false} onChange={(e) => setSysField(e.target.value)} />
             </div>
           </>
@@ -166,14 +166,14 @@ export function InspectorView() {
             <input className={inputCls} value={odeVars} spellCheck={false} onChange={(e) => setOdeVars(e.target.value)} placeholder="state vars: x" />
             <textarea className={`${inputCls} h-16 resize-none`} value={odeField} spellCheck={false} onChange={(e) => setOdeField(e.target.value)} placeholder="dx/dt: -x" />
             <div className="grid grid-cols-2 gap-1">
-              <div><label className="text-[10px] uppercase text-slate-500">y₀</label><input className={inputCls} value={odeY0} onChange={(e) => setOdeY0(e.target.value)} /></div>
-              <div><label className="text-[10px] uppercase text-slate-500">method</label>
+              <div><label className="text-[10px] uppercase text-stone-500">y₀</label><input className={inputCls} value={odeY0} onChange={(e) => setOdeY0(e.target.value)} /></div>
+              <div><label className="text-[10px] uppercase text-stone-500">method</label>
                 <select className={inputCls} value={odeMethod} onChange={(e) => setOdeMethod(e.target.value)}>
                   {ODE_METHODS.map((m) => <option key={m.name} value={m.name} title={m.description}>{m.name}</option>)}
                 </select>
               </div>
-              <div><label className="text-[10px] uppercase text-slate-500">t₀</label><input className={inputCls} value={odeT0} onChange={(e) => setOdeT0(e.target.value)} /></div>
-              <div><label className="text-[10px] uppercase text-slate-500">t₁</label><input className={inputCls} value={odeT1} onChange={(e) => setOdeT1(e.target.value)} /></div>
+              <div><label className="text-[10px] uppercase text-stone-500">t₀</label><input className={inputCls} value={odeT0} onChange={(e) => setOdeT0(e.target.value)} /></div>
+              <div><label className="text-[10px] uppercase text-stone-500">t₁</label><input className={inputCls} value={odeT1} onChange={(e) => setOdeT1(e.target.value)} /></div>
             </div>
           </>
         )}
@@ -187,18 +187,18 @@ export function InspectorView() {
         )}
         {kind === "dataset" && (
           <div>
-            <label className="text-[10px] uppercase text-slate-500">sample values (space/comma-separated)</label>
+            <label className="text-[10px] uppercase text-stone-500">sample values (space/comma-separated)</label>
             <input className={inputCls} value={tsY} spellCheck={false} onChange={(e) => setTsY(e.target.value)} placeholder="1, 2, 3, 4" />
           </div>
         )}
         {kind === "timeSeries" && (
           <>
             <div>
-              <label className="text-[10px] uppercase text-slate-500">t</label>
+              <label className="text-[10px] uppercase text-stone-500">t</label>
               <input className={inputCls} value={tsT} spellCheck={false} onChange={(e) => setTsT(e.target.value)} placeholder="0, 1, 2, 3" />
             </div>
             <div>
-              <label className="text-[10px] uppercase text-slate-500">y</label>
+              <label className="text-[10px] uppercase text-stone-500">y</label>
               <input className={inputCls} value={tsY} spellCheck={false} onChange={(e) => setTsY(e.target.value)} placeholder="0, 1, 4, 9" />
             </div>
           </>
@@ -207,9 +207,9 @@ export function InspectorView() {
         {/* Capabilities */}
         {result.capabilities.length > 0 && (
           <div>
-            <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Capabilities</h3>
+            <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Capabilities</h3>
             <div className="flex flex-wrap gap-1">
-              {result.capabilities.map((c) => <span key={c} className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-slate-300">{c}</span>)}
+              {result.capabilities.map((c) => <span key={c} className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-stone-300">{c}</span>)}
             </div>
           </div>
         )}
@@ -217,16 +217,16 @@ export function InspectorView() {
         {/* Compare */}
         {(kind === "topology" || kind === "expression") && (
           <div>
-            <h3 className="mb-1 text-[10px] uppercase tracking-wide text-slate-500">Compare with</h3>
+            <h3 className="mb-1 text-[10px] uppercase tracking-wide text-stone-500">Compare with</h3>
             {kind === "topology"
               ? <select className={inputCls} value={cmpId} onChange={(e) => setCmpId(e.target.value)}>{SURFACES.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}</select>
               : <input className={inputCls} value={cmpExpr} spellCheck={false} onChange={(e) => setCmpExpr(e.target.value)} />}
             {comparison && (
-              <div className="mt-1.5 rounded bg-black/40 p-2 text-[11px] text-slate-300">
+              <div className="mt-1.5 rounded bg-black/40 p-2 text-[11px] text-stone-300">
                 <div className="mb-1"><span className={`rounded px-1 ${CONF_COLOR[comparison.confidence]}`}>{comparison.confidence}</span> {comparison.verdict}</div>
                 {comparison.rows.map((r) => (
                   <div key={r.label} className="flex justify-between font-mono text-[10px]">
-                    <span className="text-slate-500">{r.label}</span>
+                    <span className="text-stone-500">{r.label}</span>
                     <span className={r.same ? "text-emerald-300" : "text-red-300"}>{r.a} {r.same ? "=" : "≠"} {r.b}</span>
                   </div>
                 ))}
@@ -234,18 +234,18 @@ export function InspectorView() {
             )}
           </div>
         )}
-        {history.length > 0 && <button onClick={back} className="mt-auto rounded bg-white/5 px-2 py-1 text-xs text-slate-400 hover:text-cyan-200">← Back ({history.length})</button>}
+        {history.length > 0 && <button onClick={back} className="mt-auto rounded bg-white/5 px-2 py-1 text-xs text-stone-400 hover:text-vermilion-200">← Back ({history.length})</button>}
       </aside>
 
       {/* Right: inspection result */}
       <main className="min-w-0 flex-1 overflow-y-auto">
         <div className="mx-auto max-w-3xl px-6 py-5">
-          <div className="mb-1 text-lg font-semibold text-slate-100">{result.identity}</div>
-          {result.latex && <div className="mb-4 rounded bg-black/30 px-4 py-2 text-cyan-100 ring-1 ring-white/5"><Tex src={result.latex} display /></div>}
+          <div className="mb-1 text-lg font-semibold text-stone-100">{result.identity}</div>
+          {result.latex && <div className="mb-4 rounded bg-black/30 px-4 py-2 text-vermilion-100 ring-1 ring-white/5"><Tex src={result.latex} display /></div>}
 
           {result.sections.map((s) => (
             <section key={s.title} className="mb-4">
-              <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-cyan-300/70">{s.title}</h3>
+              <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">{s.title}</h3>
               <div className="rounded bg-white/[0.02] px-3 py-1 ring-1 ring-white/5">
                 {s.properties.map((p, i) => <PropRow key={i} p={p} />)}
               </div>
@@ -254,12 +254,12 @@ export function InspectorView() {
 
           {result.relations.length > 0 && (
             <section className="mb-4">
-              <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-cyan-300/70">Related objects</h3>
+              <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-vermilion-300/70">Related objects</h3>
               <div className="flex flex-col gap-1">
                 {result.relations.map((r, i) => (
                   <div key={i} className="flex items-center justify-between rounded bg-white/[0.02] px-3 py-1.5 text-xs ring-1 ring-white/5">
-                    <span className="min-w-0 text-slate-300">{r.label}{r.description && <span className="ml-2 font-mono text-[11px] text-slate-500">{r.description}</span>}</span>
-                    {r.target && <button onClick={() => navigate(r.target!)} className="shrink-0 rounded bg-cyan-500/15 px-2 py-0.5 text-cyan-200 hover:bg-cyan-500/25">inspect →</button>}
+                    <span className="min-w-0 text-stone-300">{r.label}{r.description && <span className="ml-2 font-mono text-[11px] text-stone-500">{r.description}</span>}</span>
+                    {r.target && <button onClick={() => navigate(r.target!)} className="shrink-0 rounded bg-vermilion-500/15 px-2 py-0.5 text-vermilion-200 hover:bg-vermilion-500/25">inspect →</button>}
                   </div>
                 ))}
               </div>
@@ -269,7 +269,7 @@ export function InspectorView() {
           {result.warnings.length > 0 && (
             <section>
               <h3 className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-amber-300/70">Assumptions & limits</h3>
-              <ul className="ml-4 list-disc space-y-0.5 text-[11px] text-slate-400 marker:text-amber-400/60">
+              <ul className="ml-4 list-disc space-y-0.5 text-[11px] text-stone-400 marker:text-amber-400/60">
                 {result.warnings.map((w, i) => <li key={i}>{w}</li>)}
               </ul>
             </section>
