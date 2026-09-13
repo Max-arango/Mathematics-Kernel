@@ -18,10 +18,12 @@ export function FractalToolbar({
   stats,
   panelOpen,
   onTogglePanel,
+  onHideUi,
 }: {
   stats: Stats;
   panelOpen: boolean;
   onTogglePanel: () => void;
+  onHideUi: () => void;
 }) {
   const resetView = useStore((s) => s.resetView);
   const loadConfig = useStore((s) => s.loadConfig);
@@ -78,6 +80,13 @@ export function FractalToolbar({
           <Stat k="Iter" v={iterations} />
         </div>
         <div className="flex items-center gap-1">
+          <button className={iconBtn} onClick={onHideUi} title="Hide UI (H)" aria-label="Hide UI">
+            <svg viewBox="0 0 24 24" fill="none" className="size-4" aria-hidden>
+              <path d="M2 12 C 5 6, 19 6, 22 12 C 19 18, 5 18, 2 12 Z" stroke="currentColor" strokeWidth="2" />
+              <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
+              <line x1="4" y1="20" x2="20" y2="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
           <button className={iconBtn} onClick={resetView} title="Reset view" aria-label="Reset view">⟲</button>
           <button className={btn} onClick={exportJson} title="Save config">Save</button>
           <button className={btn} onClick={() => fileRef.current?.click()} title="Load config">Load</button>
