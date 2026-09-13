@@ -120,3 +120,15 @@ export function jacobianField(sys: DynamicalSystem, point: Vec): number[][] {
   const jsym = jacobian(sys.field, sys.vars);
   return jsym.map((row) => row.map((entry) => evaluate(entry, env)));
 }
+
+/**
+ * Divergence of the field at a state point, ∇·F = Σ_i ∂F_i/∂x_i — the trace of
+ * jacobianField. Dimension-generic (any N, not just 3D), unlike curl. Reuses
+ * jacobianField rather than differentiating separately.
+ */
+export function divergenceField(sys: DynamicalSystem, point: Vec): number {
+  const j = jacobianField(sys, point);
+  let tr = 0;
+  for (let i = 0; i < j.length; i++) tr += j[i][i];
+  return tr;
+}

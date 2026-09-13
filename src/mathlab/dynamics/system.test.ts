@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { InvalidInputError } from "../core/errors.ts";
-import { makeSystem, evalField, jacobianField } from "./system.ts";
+import { makeSystem, evalField, jacobianField, divergenceField } from "./system.ts";
 
 describe("makeSystem / evalField", () => {
   it("evaluates a hand-checked field: [y, -x] at (1,2) = [2,-1]", () => {
@@ -56,5 +56,23 @@ describe("jacobianField", () => {
   it("binds params in the symbolic Jacobian: d/dx (r*x) = r", () => {
     const sys = makeSystem(["x"], ["r*x"], { r: 3 }, "continuous");
     expect(jacobianField(sys, [5])).toEqual([[3]]);
+  });
+});
+
+describe("divergenceField", () => {
+  it("F=[x,y,z] is pure expansion: divergence = 3 everywhere", () => {
+    const sys = makeSystem(["x", "y", "z"], ["x", "y", "z"], {}, "continuous");
+    expect(divergenceField(sys, [1, 2, 3])).toBeCloseTo(3, 12);
+    expect(divergenceField(sys, [0, 0, 0])).toBeCloseTo(3, 12);
+  });
+
+  it("F=[y,-x,0] is pure rotation: divergence = 0 everywhere", () => {
+    const sys = makeSystem(["x", "y", "z"], ["y", "-x", "0"], {}, "continuous");
+    expect(divergenceField(sys, [3, 7, -2])).toBeCloseTo(0, 12);
+  });
+
+  it("F=[x,0,0]: divergence = 1", () => {
+    const sys = makeSystem(["x", "y", "z"], ["x", "0", "0"], {}, "continuous");
+    expect(divergenceField(sys, [4, 5, 6])).toBeCloseTo(1, 12);
   });
 });
